@@ -1,6 +1,40 @@
-# React + TypeScript + Vite
+# Portfólio (Victor Santos)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Site em React + TypeScript + Vite, Tailwind e efeitos GSAP/Lenis/WebGL.
+
+## Desenvolvimento
+
+```bash
+npm install
+npm run dev
+```
+
+## Deploy no Firebase Hosting
+
+**Pré-requisitos**
+
+1. Conta Google e um projeto no [Firebase Console](https://console.firebase.google.com/) (anote o **Project ID**).
+2. Na primeira vez nesta máquina: `npm exec firebase login` (abre o browser para autorizar a CLI).
+
+**Projeto ligado ao repositório**
+
+O ficheiro [`.firebaserc`](.firebaserc) está configurado com o projeto `portfolio-devsant` (coerente com os assets já referenciados em `portfolio-devsant.web.app`). Se o teu Project ID for outro, altera `.firebaserc` ou corre:
+
+```bash
+npm exec firebase use --add
+```
+
+**Publicar**
+
+```bash
+npm run deploy
+```
+
+Isto corre `npm run build` (gera `dist/`) e depois `firebase deploy --only hosting`. O site ficará disponível em `https://<project-id>.web.app` (e `.firebaseapp.com`).
+
+---
+
+# React + TypeScript + Vite (template)
 
 Currently, two official plugins are available:
 

@@ -31,7 +31,7 @@ export const portfolio: Portfolio = {
     subtitle: 'Desenvolvedor Full Stack & Estudante de Engenharia de Software.',
     description:
       'Construindo o futuro através de código limpo, inteligência artificial e interfaces 3D imersivas. Foco no desenvolvimento de assistentes virtuais e sistemas de automação.',
-    portraitSrc: 'https://portfolio-devsant.web.app/Linkedin.img.png',
+    portraitSrc: '/minhafoto.png',
     portraitAlt: 'Victor Santos',
     portraitFallbackSrc:
       'https://placehold.co/450x560/030305/00ffcc?text=V.Santos',

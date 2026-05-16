@@ -819,6 +819,7 @@ header.hidden {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 22%;
     filter: grayscale(100%) contrast(1.2) brightness(0.8);
     transition: filter 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
     mix-blend-mode: luminosity;
@@ -836,9 +837,9 @@ header.hidden {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('https://portfolio-devsant.web.app/Linkedin.img.png');
+    background-image: var(--hero-portrait-url);
     background-size: cover;
-    background-position: center;
+    background-position: center 22%;
     opacity: 0;
     mix-blend-mode: color-dodge;
     pointer-events: none;

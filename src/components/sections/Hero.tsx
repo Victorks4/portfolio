@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { CSSProperties } from 'react'
 import type { Portfolio } from '../../types/portfolio'
 import { useLenisContext } from '../../hooks/useLenisContext'
 
@@ -77,7 +78,14 @@ export function Hero({ data }: HeroProps) {
         >
           <div className="hero-visual-decor" aria-hidden />
           <div className="hero-visual-decor-inner" aria-hidden />
-          <div className="hero-image-container">
+          <div
+            className="hero-image-container"
+            style={
+              {
+                '--hero-portrait-url': `url(${JSON.stringify(imgSrc)})`,
+              } as CSSProperties
+            }
+          >
             <img
               src={imgSrc}
               alt={data.portraitAlt}
