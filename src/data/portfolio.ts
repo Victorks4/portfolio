@@ -43,7 +43,7 @@ export const portfolio: Portfolio = {
     secondaryCta: { label: 'Iniciar Conexão', href: '#contact' },
     availability: 'Disponível para novos projetos',
     // TODO: confirmar cidade
-    location: 'São Paulo, Brasil · Remoto ou Híbrido',
+    location: 'Feira de Santana, Brasil · Remoto ou Híbrido',
     scrollLabel: 'Rolar',
   },
   about: {
