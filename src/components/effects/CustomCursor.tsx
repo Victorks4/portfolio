@@ -34,21 +34,28 @@ export function CustomCursor({ enabled }: { enabled: boolean }) {
     }
     raf = requestAnimationFrame(loop)
 
-    const els = document.querySelectorAll('a, button, .hover-target')
-    const enter = () => document.body.classList.add('cursor-hover')
-    const leave = () => document.body.classList.remove('cursor-hover')
-    els.forEach((el) => {
-      el.addEventListener('mouseenter', enter)
-      el.addEventListener('mouseleave', leave)
-    })
+    // Delegação em vez de listener por elemento: cobre o conteúdo que entra
+    // depois, como a página de projeto carregada ao trocar de rota.
+    const INTERACTIVE = 'a, button, .hover-target'
+    const onOver = (e: MouseEvent) => {
+      if ((e.target as Element | null)?.closest?.(INTERACTIVE)) {
+        document.body.classList.add('cursor-hover')
+      }
+    }
+    const onOut = (e: MouseEvent) => {
+      if ((e.target as Element | null)?.closest?.(INTERACTIVE)) {
+        document.body.classList.remove('cursor-hover')
+      }
+    }
+    document.addEventListener('mouseover', onOver)
+    document.addEventListener('mouseout', onOut)
 
     return () => {
       window.removeEventListener('mousemove', onMove)
       cancelAnimationFrame(raf)
-      els.forEach((el) => {
-        el.removeEventListener('mouseenter', enter)
-        el.removeEventListener('mouseleave', leave)
-      })
+      document.removeEventListener('mouseover', onOver)
+      document.removeEventListener('mouseout', onOut)
+      document.body.classList.remove('cursor-hover')
     }
   }, [enabled])
 

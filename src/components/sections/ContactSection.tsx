@@ -16,6 +16,14 @@ function LinkedInIcon() {
   )
 }
 
+function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden>
+      <path d="M12.031 0C5.394 0 0 5.394 0 12.031c0 2.128.552 4.195 1.603 6.015L.17 24l6.115-1.603c1.766.953 3.754 1.455 5.746 1.455 6.637 0 12.031-5.394 12.031-12.031C24.062 5.394 18.668 0 12.031 0zm6.27 17.15c-.266.75-1.531 1.438-2.125 1.5-.578.063-1.344.188-3.906-.875-3.094-1.281-5.062-4.438-5.219-4.656-.156-.219-1.25-1.656-1.25-3.156s.781-2.219 1.062-2.531c.281-.312.625-.375.844-.375.219 0 .438 0 .625.031.219.031.5.094.781.781.312.781 1.062 2.594 1.156 2.781.094.188.156.406.031.656-.125.25-.188.406-.375.625-.188.219-.406.469-.562.625-.188.188-.375.406-.156.781.219.375.969 1.594 2.062 2.562 1.406 1.25 2.594 1.625 2.969 1.812.375.188.594.156.812-.094.219-.25.938-1.094 1.188-1.469.25-.375.5-.312.844-.188.344.125 2.188 1.031 2.562 1.219.375.188.625.281.719.438.094.156.094.906-.188 1.656z" />
+    </svg>
+  )
+}
+
 type ContactSectionProps = {
   data: Portfolio['contact']
   watermark: string
@@ -31,6 +39,20 @@ export function ContactSection({ data, watermark }: ContactSectionProps) {
           <span className="text-outline">{data.titleLine2Outline}</span>
         </h2>
 
+        {data.availability || data.responseTime ? (
+          <div className="contact-status reveal-text">
+            {data.availability ? (
+              <span className="contact-status-badge">
+                <span className="contact-status-dot" aria-hidden />
+                {data.availability}
+              </span>
+            ) : null}
+            {data.responseTime ? (
+              <span className="contact-status-note">{data.responseTime}</span>
+            ) : null}
+          </div>
+        ) : null}
+
         <div className="magnetic-wrap reveal-text">
           <a
             href={`mailto:${data.email}`}
@@ -39,6 +61,29 @@ export function ContactSection({ data, watermark }: ContactSectionProps) {
           >
             {data.email}
           </a>
+        </div>
+
+        <div className="contact-channels reveal-text">
+          {data.whatsappHref ? (
+            <a
+              href={data.whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary hover-target contact-whatsapp"
+            >
+              <WhatsAppIcon />
+              {data.whatsappLabel ?? 'WhatsApp'}
+            </a>
+          ) : null}
+          {data.cvHref ? (
+            <a
+              href={data.cvHref}
+              download
+              className="btn btn-outline hover-target"
+            >
+              {data.cvLabel ?? 'Baixar CV'}
+            </a>
+          ) : null}
         </div>
 
         <div className="social-links reveal-text">

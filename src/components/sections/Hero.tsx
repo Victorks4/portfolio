@@ -23,6 +23,13 @@ export function Hero({ data }: HeroProps) {
     <section id="hero" className="container">
       <div className="hero-layout">
         <div className="hero-content">
+          {data.availability ? (
+            <span className="hero-availability">
+              <span className="hero-availability-dot" aria-hidden />
+              {data.availability}
+            </span>
+          ) : null}
+
           <span className="hero-greeting">{data.greeting}</span>
 
           <h1 className="sr-only">
@@ -42,6 +49,29 @@ export function Hero({ data }: HeroProps) {
 
           <h2 className="hero-subtitle split-text font-display">{data.subtitle}</h2>
           <p className="hero-desc">{data.description}</p>
+
+          {data.location ? (
+            <p className="hero-location">
+              <svg viewBox="0 0 24 24" aria-hidden>
+                <path
+                  d="M12 21s-7-5.686-7-11a7 7 0 1 1 14 0c0 5.314-7 11-7 11z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  fill="none"
+                />
+                <circle
+                  cx="12"
+                  cy="10"
+                  r="2.5"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  fill="none"
+                />
+              </svg>
+              {data.location}
+            </p>
+          ) : null}
+
           <div className="hero-actions">
             <div className="magnetic-wrap">
               <a
@@ -69,6 +99,18 @@ export function Hero({ data }: HeroProps) {
                 {data.secondaryCta.label}
               </a>
             </div>
+            {data.cvHref ? (
+              <div className="magnetic-wrap">
+                <a
+                  href={data.cvHref}
+                  download
+                  className="btn btn-ghost hover-target magnetic-btn"
+                  data-strength="30"
+                >
+                  {data.cvLabel ?? 'Baixar CV'}
+                </a>
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -103,7 +145,7 @@ export function Hero({ data }: HeroProps) {
       </div>
 
       <div className="scroll-indicator" aria-hidden>
-        <span className="scroll-text">Scroll</span>
+        <span className="scroll-text">{data.scrollLabel ?? 'Rolar'}</span>
         <div className="scroll-line" />
       </div>
     </section>

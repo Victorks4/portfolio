@@ -5,28 +5,38 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { createUltimatePostShader } from './shaders'
 import { particleMath } from './particleMath'
+import type { PerformanceConfig } from '../../utils/performanceTier'
+
+export type WebGLCoreOptions = Pick<
+  PerformanceConfig,
+  'enableBloom' | 'enablePostShader' | 'pixelRatio'
+>
 
 export class WebGLCore {
   canvas: HTMLCanvasElement
   width: number
   height: number
   pixelRatio: number
+  enableBloom: boolean
+  enablePostShader: boolean
   scene: THREE.Scene
   camera: THREE.PerspectiveCamera
   renderer: THREE.WebGLRenderer
   composer!: EffectComposer
-  customPass!: ShaderPass
+  customPass: ShaderPass | null = null
   clock: THREE.Clock
   mouse: THREE.Vector2
   targetMouse: THREE.Vector2
   scrollVelocity = 0
   targetScrollVelocity = 0
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, options: WebGLCoreOptions) {
     this.canvas = canvas
     this.width = window.innerWidth
     this.height = window.innerHeight
-    this.pixelRatio = Math.min(window.devicePixelRatio, 2)
+    this.pixelRatio = options.pixelRatio
+    this.enableBloom = options.enableBloom
+    this.enablePostShader = options.enablePostShader
 
     this.scene = new THREE.Scene()
     this.scene.fog = new THREE.FogExp2(0x030305, 0.02)
@@ -61,26 +71,35 @@ export class WebGLCore {
   dispose() {
     window.removeEventListener('resize', this.onResize)
     window.removeEventListener('mousemove', this.onMouseMove)
+    this.composer?.dispose()
     this.renderer.dispose()
   }
 
   initPostProcessing() {
+    const useComposer = this.enableBloom || this.enablePostShader
+
+    if (!useComposer) return
+
     const ultimate = createUltimatePostShader(THREE)
     this.composer = new EffectComposer(this.renderer)
     const renderPass = new RenderPass(this.scene, this.camera)
     this.composer.addPass(renderPass)
 
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(this.width, this.height),
-      1.5,
-      0.4,
-      0.85,
-    )
-    this.composer.addPass(bloomPass)
+    if (this.enableBloom) {
+      const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(this.width, this.height),
+        1.5,
+        0.4,
+        0.85,
+      )
+      this.composer.addPass(bloomPass)
+    }
 
-    this.customPass = new ShaderPass(ultimate)
-    this.customPass.uniforms.uResolution.value.set(this.width, this.height)
-    this.composer.addPass(this.customPass)
+    if (this.enablePostShader) {
+      this.customPass = new ShaderPass(ultimate)
+      this.customPass.uniforms.uResolution.value.set(this.width, this.height)
+      this.composer.addPass(this.customPass)
+    }
   }
 
   onResize = () => {
@@ -89,8 +108,8 @@ export class WebGLCore {
     this.camera.aspect = this.width / this.height
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(this.width, this.height)
-    this.composer.setSize(this.width, this.height)
-    this.customPass.uniforms.uResolution.value.set(this.width, this.height)
+    this.composer?.setSize(this.width, this.height)
+    this.customPass?.uniforms.uResolution.value.set(this.width, this.height)
   }
 
   onMouseMove = (e: MouseEvent) => {
@@ -113,13 +132,19 @@ export class WebGLCore {
     this.camera.position.y = this.mouse.y * 3
     this.camera.lookAt(0, 0, 0)
 
-    this.customPass.uniforms.uTime.value = time
-    this.customPass.uniforms.uVelocity.value = Math.abs(this.scrollVelocity)
+    if (this.customPass) {
+      this.customPass.uniforms.uTime.value = time
+      this.customPass.uniforms.uVelocity.value = Math.abs(this.scrollVelocity)
 
-    const shaderMouseX = (this.mouse.x + 1) / 2
-    const shaderMouseY = (this.mouse.y + 1) / 2
-    this.customPass.uniforms.uMouse.value.set(shaderMouseX, shaderMouseY)
+      const shaderMouseX = (this.mouse.x + 1) / 2
+      const shaderMouseY = (this.mouse.y + 1) / 2
+      this.customPass.uniforms.uMouse.value.set(shaderMouseX, shaderMouseY)
+    }
 
-    this.composer.render()
+    if (this.composer) {
+      this.composer.render()
+    } else {
+      this.renderer.render(this.scene, this.camera)
+    }
   }
 }

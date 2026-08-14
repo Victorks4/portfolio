@@ -24,6 +24,7 @@ export function Skills({ data }: SkillsProps) {
                 <div
                   key={skill.name}
                   className="skill-card hover-target"
+                  tabIndex={0}
                   onMouseMove={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect()
                     const x = e.clientX - rect.left
@@ -36,6 +37,11 @@ export function Skills({ data }: SkillsProps) {
                     <path d={skill.iconD} />
                   </svg>
                   <span className="skill-name">{skill.name}</span>
+                  {skill.usedIn?.length ? (
+                    <span className="skill-used-in">
+                      {skill.usedIn.join(' · ')}
+                    </span>
+                  ) : null}
                 </div>
               ))}
             </div>

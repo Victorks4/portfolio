@@ -13,9 +13,9 @@ export class ParticleSystem {
   material!: THREE.ShaderMaterial
   mesh!: THREE.Points
 
-  constructor(webgl: WebGLCore) {
+  constructor(webgl: WebGLCore, particleCount: number) {
     this.webgl = webgl
-    this.count = window.innerWidth < 768 ? 20000 : 60000
+    this.count = particleCount
     this.initGeometry()
     this.initMaterial()
     this.initMesh()

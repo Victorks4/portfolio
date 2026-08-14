@@ -24,7 +24,15 @@ export function Timeline({ data }: TimelineProps) {
               <div className="timeline-node" aria-hidden />
               <article className="timeline-content hover-target">
                 <div className="timeline-year">{item.year}</div>
-                <h3 className="timeline-title">{item.title}</h3>
+                <h3 className="timeline-title">{item.role ?? item.title}</h3>
+                {item.organization ? (
+                  <p className="timeline-org">
+                    {item.organization}
+                    {item.period ? (
+                      <span className="timeline-period">{item.period}</span>
+                    ) : null}
+                  </p>
+                ) : null}
                 <p className="timeline-desc">{item.description}</p>
               </article>
             </div>

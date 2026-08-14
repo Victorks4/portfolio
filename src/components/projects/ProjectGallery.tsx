@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import type { Portfolio } from '../../types/portfolio'
 import { ProjectCard } from './ProjectCard'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-const AUTOPLAY_MS = 3000
+const AUTOPLAY_MS = 5000
 
 type ProjectGalleryProps = {
   data: Portfolio['projects']
@@ -13,6 +15,9 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
   const count = items.length
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
+  // Depois que a pessoa escolhe um projeto, deslizar sozinho vira atrapalho.
+  const [tookControl, setTookControl] = useState(false)
+  const tabsRef = useRef<HTMLDivElement>(null)
 
   const goTo = useCallback(
     (i: number) => {
@@ -22,16 +27,44 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
     [count],
   )
 
-  const next = useCallback(() => goTo(index + 1), [goTo, index])
-  const prev = useCallback(() => goTo(index - 1), [goTo, index])
+  const select = useCallback(
+    (i: number) => {
+      setTookControl(true)
+      goTo(i)
+    },
+    [goTo],
+  )
+
+  const next = useCallback(() => select(index + 1), [select, index])
+  const prev = useCallback(() => select(index - 1), [select, index])
 
   useEffect(() => {
-    if (paused || count <= 1) return
+    if (paused || tookControl || count <= 1) return
     const id = window.setInterval(() => {
       setIndex((curr) => (curr + 1) % count)
     }, AUTOPLAY_MS)
     return () => window.clearInterval(id)
-  }, [paused, count, index])
+  }, [paused, tookControl, count])
+
+  useEffect(() => {
+    const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 100)
+    return () => window.clearTimeout(refreshId)
+  }, [])
+
+  // No mobile a faixa de nomes rola só na horizontal. scrollIntoView puxava
+  // a página inteira até #projects no mount e a cada troca do autoplay.
+  useEffect(() => {
+    const container = tabsRef.current
+    const tab = container?.querySelector<HTMLElement>(
+      `[data-tab-index="${index}"]`,
+    )
+    if (!container || !tab) return
+    if (container.scrollWidth <= container.clientWidth) return
+
+    const target =
+      tab.offsetLeft - (container.clientWidth - tab.offsetWidth) / 2
+    container.scrollTo({ left: Math.max(0, target), behavior: 'smooth' })
+  }, [index])
 
   return (
     <section id="projects" className="container">
@@ -86,15 +119,16 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
           >
             {items.map((proj, i) => (
               <div
-                key={proj.title}
+                key={proj.slug}
+                id={`project-slide-${i}`}
                 className="projects-slide"
-                role="group"
+                role="tabpanel"
                 aria-roledescription="slide"
-                aria-label={`Projeto ${i + 1} de ${count}: ${proj.title}`}
+                aria-labelledby={`project-tab-${i}`}
                 aria-hidden={i !== index}
                 tabIndex={i === index ? 0 : -1}
               >
-                <ProjectCard project={proj} index={i} />
+                <ProjectCard project={proj} index={i} isActive={i === index} />
               </div>
             ))}
           </div>
@@ -120,18 +154,30 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
         </button>
       </div>
 
-      <div className="projects-dots" role="tablist" aria-label="Projetos">
+      <div
+        className="projects-tabs"
+        role="tablist"
+        aria-label="Projetos"
+        ref={tabsRef}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
         {items.map((proj, i) => (
           <button
-            key={proj.title}
+            key={proj.slug}
             type="button"
             role="tab"
+            id={`project-tab-${i}`}
+            data-tab-index={i}
             aria-selected={i === index}
             aria-controls={`project-slide-${i}`}
-            aria-label={`Ir para o projeto ${proj.title}`}
-            className={`projects-dot hover-target${i === index ? ' is-active' : ''}`}
-            onClick={() => goTo(i)}
-          />
+            tabIndex={i === index ? 0 : -1}
+            className={`projects-tab hover-target${i === index ? ' is-active' : ''}`}
+            style={{ '--project-color': proj.color } as CSSProperties}
+            onClick={() => select(i)}
+          >
+            {proj.title}
+          </button>
         ))}
       </div>
     </section>

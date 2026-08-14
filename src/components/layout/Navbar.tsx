@@ -1,30 +1,70 @@
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import type { NavItem } from '../../types/portfolio'
 import { useLenisContext } from '../../hooks/useLenisContext'
-import { useState } from 'react'
 
 type NavbarProps = {
   logoLabel: string
   items: NavItem[]
+  contactCta: NavItem
 }
 
-export function Navbar({ logoLabel, items }: NavbarProps) {
+export function Navbar({ logoLabel, items, contactCta }: NavbarProps) {
   const { scrollToHash } = useLenisContext()
+  const { pathname } = useLocation()
+  const routerNavigate = useNavigate()
   const [open, setOpen] = useState(false)
+  const [activeHash, setActiveHash] = useState('')
+
+  const isHome = pathname === '/'
+  // Fora da home não há seção ativa; derivar evita guardar estado obsoleto.
+  const activeSection = isHome ? activeHash : ''
+
+  useEffect(() => {
+    if (!isHome) return
+
+    const triggers = items
+      .filter((item) => document.querySelector(item.href))
+      .map((item) =>
+        ScrollTrigger.create({
+          trigger: item.href,
+          start: 'top center',
+          end: 'bottom center',
+          // onToggle também dispara no refresh, marcando a seção correta ao carregar.
+          onToggle: (self) => {
+            if (self.isActive) setActiveHash(item.href)
+          },
+        }),
+      )
+
+    return () => triggers.forEach((trigger) => trigger.kill())
+  }, [isHome, items])
 
   const navigate = (href: string) => {
-    scrollToHash(href)
     setOpen(false)
+    if (isHome) {
+      scrollToHash(href)
+    } else {
+      routerNavigate(`/${href}`)
+    }
   }
 
   return (
     <header id="header">
       <a
-        href="#hero"
+        href={isHome ? '#hero' : '/'}
         className="nav-logo hover-target magnetic-wrap"
         aria-label="Início"
         onClick={(e) => {
           e.preventDefault()
-          navigate('#hero')
+          if (isHome) {
+            scrollToHash('#hero')
+            setOpen(false)
+          } else {
+            setOpen(false)
+            routerNavigate('/')
+          }
         }}
       >
         <span className="nav-logo-dot" aria-hidden />
@@ -34,8 +74,11 @@ export function Navbar({ logoLabel, items }: NavbarProps) {
         {items.map((item) => (
           <li key={item.href}>
             <a
-              href={item.href}
-              className="nav-link hover-target"
+              href={isHome ? item.href : `/${item.href}`}
+              className={`nav-link hover-target${
+                activeSection === item.href ? ' is-active' : ''
+              }`}
+              aria-current={activeSection === item.href ? 'true' : undefined}
               onClick={(e) => {
                 e.preventDefault()
                 navigate(item.href)
@@ -45,6 +88,18 @@ export function Navbar({ logoLabel, items }: NavbarProps) {
             </a>
           </li>
         ))}
+        <li>
+          <a
+            href={isHome ? contactCta.href : `/${contactCta.href}`}
+            className="nav-cta hover-target"
+            onClick={(e) => {
+              e.preventDefault()
+              navigate(contactCta.href)
+            }}
+          >
+            {contactCta.label}
+          </a>
+        </li>
       </ul>
       <button
         type="button"

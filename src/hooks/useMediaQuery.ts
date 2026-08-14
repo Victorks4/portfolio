@@ -1,23 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
+
+const NOOP = () => () => {}
 
 export function useMediaQuery(query: string): boolean {
-  const getMatch = () =>
-    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-      ? window.matchMedia(query).matches
-      : false
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => {
+      if (typeof window === 'undefined' || !window.matchMedia) return NOOP()
+      const mql = window.matchMedia(query)
+      mql.addEventListener('change', onStoreChange)
+      return () => mql.removeEventListener('change', onStoreChange)
+    },
+    [query],
+  )
 
-  const [matches, setMatches] = useState(getMatch)
+  const getSnapshot = useCallback(
+    () =>
+      typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+        ? window.matchMedia(query).matches
+        : false,
+    [query],
+  )
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return
-    const mql = window.matchMedia(query)
-    const onChange = (e: MediaQueryListEvent) => setMatches(e.matches)
-    setMatches(mql.matches)
-    mql.addEventListener('change', onChange)
-    return () => mql.removeEventListener('change', onChange)
-  }, [query])
-
-  return matches
+  return useSyncExternalStore(subscribe, getSnapshot, () => false)
 }
 
 export type Breakpoint = 'mobile' | 'tablet' | 'desktop'

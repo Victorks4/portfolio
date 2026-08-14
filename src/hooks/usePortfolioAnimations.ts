@@ -2,43 +2,23 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import type { MutableRefObject } from 'react'
 import { useEffect, useRef } from 'react'
-import type Lenis from 'lenis'
 import type { WebGLApi } from '../effects/webgl/WebGLBackground'
+import { registerTextOutlineReveals } from './useTextOutlineReveal'
 
 gsap.registerPlugin(ScrollTrigger)
 
 type Params = {
-  lenis: Lenis | null
   introReady: boolean
   morphApiRef: MutableRefObject<WebGLApi | null>
 }
 
-export function usePortfolioAnimations({
-  lenis,
-  introReady,
-  morphApiRef,
-}: Params) {
+export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
   const magneticCleanups = useRef<(() => void)[]>([])
 
   useEffect(() => {
-    if (!lenis) return
-
-    const tickerFn = (time: number) => {
-      lenis.raf(time * 1000)
-    }
-    gsap.ticker.add(tickerFn)
-    gsap.ticker.lagSmoothing(0)
-
-    const offScroll = lenis.on('scroll', ScrollTrigger.update)
-
-    return () => {
-      gsap.ticker.remove(tickerFn)
-      offScroll()
-    }
-  }, [lenis])
-
-  useEffect(() => {
     if (!introReady) return
+
+    let cleanupOutline: (() => void) | undefined
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline()
@@ -115,6 +95,7 @@ export function usePortfolioAnimations({
       })
 
       gsap.utils.toArray<HTMLElement>('.reveal-text').forEach((text) => {
+        const isOutline = text.classList.contains('text-outline')
         ScrollTrigger.create({
           trigger: text,
           start: 'top 90%',
@@ -128,12 +109,14 @@ export function usePortfolioAnimations({
                 opacity: 1,
                 duration: 0.9,
                 ease: 'power3.out',
-                clearProps: 'opacity,transform',
+                clearProps: isOutline ? 'transform' : 'opacity,transform',
               },
             )
           },
         })
       })
+
+      cleanupOutline = registerTextOutlineReveals()
 
       gsap.utils.toArray<HTMLElement>('.counter').forEach((counter) => {
         const target = parseInt(counter.dataset.target ?? '0', 10)
@@ -290,6 +273,7 @@ export function usePortfolioAnimations({
 
     return () => {
       window.clearTimeout(refreshId)
+      cleanupOutline?.()
       ctx.revert()
       magneticCleanups.current.forEach((fn) => fn())
       magneticCleanups.current = []
