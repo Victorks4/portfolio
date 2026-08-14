@@ -2125,6 +2125,19 @@ header.hidden {
     .contact-title { font-size: clamp(2.5rem, 12vw, 5rem); }
     .contact-email { font-size: var(--text-lg); }
 
+    .footer-bg-text {
+        left: 0;
+        right: 0;
+        width: 100%;
+        transform: none;
+        text-align: center;
+        font-size: clamp(2rem, 10.5vw, 4.25rem);
+        letter-spacing: 0.05em;
+        bottom: -1%;
+        padding-inline: 0.25rem;
+        box-sizing: border-box;
+    }
+
     .footer-bottom { flex-direction: column; gap: var(--space-sm); text-align: center; }
     .social-btn { width: 60px; height: 60px; }
     .social-links { gap: var(--space-md); }
@@ -2134,6 +2147,11 @@ header.hidden {
     :root {
         --container-padding: 1rem;
         --space-xxl: 4rem;
+    }
+
+    .footer-bg-text {
+        font-size: clamp(1.75rem, 9.5vw, 3rem);
+        letter-spacing: 0.03em;
     }
 
     .skills-grid { grid-template-columns: 1fr 1fr; }
