@@ -20,6 +20,8 @@ export type SkillItem = {
   name: string
   /** SVG path `d` for monochrome icon */
   iconD: string
+  /** ViewBox do ícone quando o path ultrapassa 0 0 24 24 */
+  iconViewBox?: string
   /** Projetos onde a tecnologia foi usada de verdade — prova em vez de autodeclaração. */
   usedIn?: string[]
 }

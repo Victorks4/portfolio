@@ -7,6 +7,8 @@ type PreloaderProps = {
   onDone: () => void
 }
 
+const MAX_VISIBLE_LOGS = 4
+
 export function Preloader({ brand, logs, onDone }: PreloaderProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
@@ -24,6 +26,11 @@ export function Preloader({ brand, logs, onDone }: PreloaderProps) {
       p.textContent = logs[logIndex]
       terminal.appendChild(p)
       gsap.to(p, { opacity: 1, y: 0, duration: 0.3 })
+
+      while (terminal.children.length > MAX_VISIBLE_LOGS) {
+        terminal.removeChild(terminal.firstChild!)
+      }
+
       logIndex++
     }, 400)
 
@@ -68,7 +75,9 @@ export function Preloader({ brand, logs, onDone }: PreloaderProps) {
     <div id="preloader" ref={rootRef}>
       <div className="loader-terminal" ref={terminalRef} />
       <div className="loader-center">
-        <h1 className="loader-title">{brand}</h1>
+        <h1 className="loader-title" data-text={brand}>
+          {brand}
+        </h1>
         <div className="loader-progress-wrapper">
           <div
             className="loader-progress-bar"

@@ -11,7 +11,15 @@ gsap.registerPlugin(ScrollTrigger)
  */
 export function useLenisGsapBridge(lenis: Lenis | null) {
   useEffect(() => {
-    if (!lenis) return
+    if (!lenis) {
+      const onScroll = () => ScrollTrigger.update()
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll, { passive: true })
+      return () => {
+        window.removeEventListener('scroll', onScroll)
+        window.removeEventListener('resize', onScroll)
+      }
+    }
 
     const tickerFn = (time: number) => {
       lenis.raf(time * 1000)

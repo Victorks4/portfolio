@@ -138,24 +138,38 @@ export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
       gsap.utils.toArray<HTMLElement>('.skill-category').forEach((cat) => {
         const cards = cat.querySelectorAll<HTMLElement>('.skill-card')
         if (!cards.length) return
+
+        let played = false
+        const play = () => {
+          if (played) return
+          played = true
+          gsap.fromTo(
+            cards,
+            { y: 40, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              stagger: 0.08,
+              duration: 0.7,
+              ease: 'power3.out',
+              clearProps: 'opacity,transform',
+            },
+          )
+        }
+
         ScrollTrigger.create({
           trigger: cat,
-          start: 'top 90%',
+          start: 'top 92%',
           once: true,
-          onEnter: () => {
-            gsap.fromTo(
-              cards,
-              { y: 40, opacity: 0 },
-              {
-                y: 0,
-                opacity: 1,
-                stagger: 0.08,
-                duration: 0.7,
-                ease: 'power3.out',
-                clearProps: 'opacity,transform',
-              },
-            )
-          },
+          onEnter: play,
+        })
+
+        // Mobile: seção já visível no mount — evita cards presos em opacity 0
+        requestAnimationFrame(() => {
+          const rect = cat.getBoundingClientRect()
+          if (rect.top < window.innerHeight * 0.95 && rect.bottom > 0) {
+            play()
+          }
         })
       })
 
@@ -270,9 +284,14 @@ export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
     })
 
     const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 400)
+    const onOrientation = () => {
+      window.setTimeout(() => ScrollTrigger.refresh(), 200)
+    }
+    window.addEventListener('orientationchange', onOrientation)
 
     return () => {
       window.clearTimeout(refreshId)
+      window.removeEventListener('orientationchange', onOrientation)
       cleanupOutline?.()
       ctx.revert()
       magneticCleanups.current.forEach((fn) => fn())

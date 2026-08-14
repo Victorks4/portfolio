@@ -44,9 +44,6 @@ export const portfolio: Portfolio = {
     availability: 'Disponível para novos projetos',
     // TODO: confirmar cidade
     location: 'São Paulo, Brasil · Remoto ou Híbrido',
-    // TODO: adicionar o arquivo em public/cv-victor-santos.pdf
-    cvHref: '/cv-victor-santos.pdf',
-    cvLabel: 'Baixar CV',
     scrollLabel: 'Rolar',
   },
   about: {
@@ -81,8 +78,8 @@ export const portfolio: Portfolio = {
       },
     ],
     stats: [
-      { value: 4, label: 'Sistemas em Produção' },
-      { value: 14, label: 'Tecnologias em Uso' },
+      { value: 9, label: 'Sistemas em Produção' },
+      { value: 18, label: 'Tecnologias em Uso' },
       { value: 3, label: 'Anos de Imersão' },
     ],
   },
@@ -101,12 +98,14 @@ export const portfolio: Portfolio = {
           {
             name: 'React',
             usedIn: ['Smart Key', 'PontiFy', 'Origyn'],
+            iconViewBox: '-1 -1 26 26',
             iconD:
               'M12 22.65C4.78 22.65-.6 18.06-.6 12S4.78 1.35 12 1.35 24.6 5.94 24.6 12s-5.38 10.65-12.6 10.65zm0-19.8C5.83 2.85 1.4 6.85 1.4 12s4.43 9.15 10.6 9.15 10.6-4 10.6-9.15S18.17 2.85 12 2.85zM12 15a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0-4.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z',
           },
           {
             name: 'Tailwind CSS',
             usedIn: ['Smart Key', 'PontiFy', 'Origyn'],
+            iconViewBox: '-7 4 30 20',
             iconD:
               'M12.001,4.8c-3.208,0-5.455,1.561-6.741,4.684c1.286-2.141,3.048-2.81,5.286-2.007c1.428,0.512,2.447,1.554,3.585,2.718 C15.864,11.977,17.845,14,22.001,14c3.208,0,5.455-1.561,6.741-4.684c-1.286,2.141-3.048,2.81-5.286,2.007 c-1.428-0.512-2.447-1.554-3.585-2.718C18.138,6.823,16.157,4.8,12.001,4.8z M5.26,14c-3.208,0-5.455,1.561-6.741,4.684 c1.286-2.141,3.048-2.81,5.286-2.007c1.428,0.512,2.447,1.554,3.585,2.718C9.123,21.177,11.104,23,15.26,23 c3.208,0,5.455-1.561,6.741-4.684c-1.286,2.141-3.048,2.81-5.286,2.007c-1.428-0.512-2.447-1.554-3.585-2.718 C11.397,16.023,9.416,14,5.26,14z',
           },
@@ -115,6 +114,12 @@ export const portfolio: Portfolio = {
             usedIn: ['PontiFy', 'Origyn'],
             iconD:
               'M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0H1.125zM12.9 16.733c0 1.838-1.503 3.34-3.34 3.34-1.838 0-3.34-1.502-3.34-3.34V9.658h2.39v7.075c0 .524.426.95.95.95.524 0 .95-.426.95-.95V9.658h2.39v7.075zm7.747-3.791c0 2.302-1.868 4.17-4.17 4.17-2.302 0-4.17-1.868-4.17-4.17v-.15h2.39v.15c0 .983.797 1.78 1.78 1.78.983 0 1.78-.797 1.78-1.78 0-.983-.797-1.78-1.78-1.78-.501 0-.953.208-1.278.544l-1.688-1.688c.783-.783 1.865-1.267 3.055-1.267 2.302 0 4.17 1.868 4.17 4.17v.021z',
+          },
+          {
+            name: 'Three.js',
+            usedIn: ['Origyn'],
+            iconD:
+              'M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l8 4v8.64l-8 4-8-4V8.18l8-4z',
           },
         ],
       },
@@ -140,7 +145,25 @@ export const portfolio: Portfolio = {
           {
             name: 'APIs RESTful',
             usedIn: ['Smart Key', 'PontiFy', 'Origyn'],
-            iconD: 'M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z',
+            iconD: 'M3 5.5h18v3H3zm0 7h18v3H3zm0 7h18v3H3z',
+          },
+          {
+            name: 'PostgreSQL',
+            usedIn: ['PontiFy', 'Origyn'],
+            iconD:
+              'M12 2C6.48 2 2 4.24 2 7c0 2.37 3.32 4.35 7.76 4.88l-.68 1.67C5.17 12.87 2 11.11 2 9v3c0 2.76 4.48 5 10 5s10-2.24 10-5V9c0 2.11-3.17 3.87-7.08 4.55l-.68-1.67C18.68 11.35 22 9.37 22 7c0-2.76-4.48-5-10-5zm0 8.5c-4.42 0-8-1.79-8-4s3.58-4 8-4 8 1.79 8 4-3.58 4-8 4z',
+          },
+          {
+            name: 'Firebase',
+            usedIn: ['Smart Key'],
+            iconD:
+              'M5.27 2.05A1.5 1.5 0 0 0 4 3.5v1.1l7.2 4.05 2.8-5.6H5.27zM3.5 5.8v12.7c0 .83.67 1.5 1.5 1.5h14c.83 0 1.5-.67 1.5-1.5V5.8l-8.2 4.65L3.5 5.8zm15.2-2.1l-3.1 6.2 3.1 1.75V3.7z',
+          },
+          {
+            name: 'Gateway de pagamento',
+            usedIn: ['Origyn'],
+            iconD:
+              'M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z',
           },
           {
             name: 'SQLite/SQL',
@@ -170,6 +193,12 @@ export const portfolio: Portfolio = {
             usedIn: ['BellaBot'],
             iconD:
               'M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z',
+          },
+          {
+            name: 'Integração com IA',
+            usedIn: ['BellaBot', 'Origyn'],
+            iconD:
+              'M12 0c-.3 6.6-5.4 11.7-12 12 6.6.3 11.7 5.4 12 12 .3-6.6 5.4-11.7 12-12-6.6-.3-11.7-5.4-12-12z',
           },
           {
             name: 'Gemini API',
@@ -216,7 +245,8 @@ export const portfolio: Portfolio = {
         tech: ['Node.js', 'Firebase', 'React', 'Tailwind'],
         color: '#ffca28',
         shapeClass: 'shape-smartkey',
-        imageSrc: '/smartkey/Captura%20de%20tela%202026-08-13%20215427.png',
+        imageSrc: '/smartkey/Gemini_Generated_Image_ridpxmridpxmridp.jpg',
+        imageOpacity: 0.2,
         detail: projectDetails['smart-key'],
       },
       {
@@ -229,7 +259,8 @@ export const portfolio: Portfolio = {
         tech: ['Next.js', 'Tailwind CSS', 'NestJS', 'PostgreSQL'],
         color: '#4d9fff',
         shapeClass: 'shape-pontify',
-        imageSrc: '/pointfy/pont.png',
+        imageSrc: '/pointfy/Gemini_Generated_Image_iyu517iyu517iyu5.jpg',
+        imageOpacity: 0.2,
         detail: projectDetails.pontify,
       },
       {
@@ -298,13 +329,10 @@ export const portfolio: Portfolio = {
     ],
     footerCopyright: '© 2026 Victor Santos. Todos os direitos reservados.',
     footerTechNote: 'Arquitetura em WebGL, Three.js & Custom GLSL Shaders.',
-    // TODO: trocar pelo número real (formato wa.me/55DDDNUMERO)
-    whatsappHref: 'https://wa.me/5511999999999',
+    whatsappHref: 'https://wa.me/5575998013978',
     whatsappLabel: 'WhatsApp',
     availability: 'Disponível para novos projetos',
     responseTime: 'Respondo em até 24h',
-    cvHref: '/cv-victor-santos.pdf',
-    cvLabel: 'Baixar CV',
   },
   preloaderLogs: [
     '> INITIALIZING DEV.SANTOS KERNEL...',

@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import type { Portfolio } from '../../types/portfolio'
 import { ProjectCard } from './ProjectCard'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useIsTouch } from '../../hooks/useMediaQuery'
 
 const AUTOPLAY_MS = 5000
 
@@ -13,6 +14,7 @@ type ProjectGalleryProps = {
 export function ProjectGallery({ data }: ProjectGalleryProps) {
   const items = data.items
   const count = items.length
+  const isTouch = useIsTouch()
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   // Depois que a pessoa escolhe um projeto, deslizar sozinho vira atrapalho.
@@ -77,10 +79,12 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
 
       <div
         className="projects-carousel"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-        onFocus={() => setPaused(true)}
-        onBlur={() => setPaused(false)}
+        onMouseEnter={() => {
+          if (!isTouch) setPaused(true)
+        }}
+        onMouseLeave={() => {
+          if (!isTouch) setPaused(false)
+        }}
         onKeyDown={(e) => {
           if (e.key === 'ArrowRight') {
             e.preventDefault()
@@ -159,8 +163,12 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
         role="tablist"
         aria-label="Projetos"
         ref={tabsRef}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
+        onMouseEnter={() => {
+          if (!isTouch) setPaused(true)
+        }}
+        onMouseLeave={() => {
+          if (!isTouch) setPaused(false)
+        }}
       >
         {items.map((proj, i) => (
           <button

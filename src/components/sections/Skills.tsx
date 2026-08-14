@@ -33,15 +33,22 @@ export function Skills({ data }: SkillsProps) {
                     e.currentTarget.style.setProperty('--mouse-y', `${y}px`)
                   }}
                 >
-                  <svg className="skill-icon" viewBox="0 0 24 24" aria-hidden>
-                    <path d={skill.iconD} />
-                  </svg>
+                  <div className="skill-icon-slot" aria-hidden>
+                    <svg
+                      className="skill-icon"
+                      viewBox={skill.iconViewBox ?? '0 0 24 24'}
+                      preserveAspectRatio="xMidYMid meet"
+                    >
+                      <path d={skill.iconD} fill="currentColor" />
+                    </svg>
+                  </div>
                   <span className="skill-name">{skill.name}</span>
-                  {skill.usedIn?.length ? (
-                    <span className="skill-used-in">
-                      {skill.usedIn.join(' · ')}
-                    </span>
-                  ) : null}
+                  <span
+                    className={`skill-used-in${skill.usedIn?.length ? '' : ' skill-used-in--empty'}`}
+                    aria-hidden={!skill.usedIn?.length}
+                  >
+                    {skill.usedIn?.join(' · ') ?? ''}
+                  </span>
                 </div>
               ))}
             </div>
