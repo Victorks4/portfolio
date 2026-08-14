@@ -7,11 +7,6 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function prefersTouchReveal(): boolean {
-  if (typeof window === 'undefined') return false
-  return window.matchMedia('(hover: none), (pointer: coarse)').matches
-}
-
 /** Permite que a página de projeto acenda o título na cor do próprio projeto. */
 function accentOf(el: HTMLElement): string {
   const value = getComputedStyle(el)
@@ -36,45 +31,11 @@ function applyOutlineProgress(el: HTMLElement, progress: number, rgb: string) {
   }
 }
 
-function revealOutlineOnEnter(el: HTMLElement, rgb: string) {
-  const proxy = { value: 0 }
-  let lit = false
-
-  const lightUp = () => {
-    if (lit) return
-    lit = true
-    gsap.to(proxy, {
-      value: 1,
-      duration: 0.85,
-      ease: 'power2.out',
-      onUpdate: () => applyOutlineProgress(el, proxy.value, rgb),
-      onComplete: () => applyOutlineProgress(el, 1, rgb),
-    })
-  }
-
-  const trigger = ScrollTrigger.create({
-    trigger: el,
-    start: 'top 88%',
-    once: true,
-    onEnter: lightUp,
-  })
-
-  requestAnimationFrame(() => {
-    const rect = el.getBoundingClientRect()
-    if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
-      lightUp()
-    }
-  })
-
-  return trigger
-}
-
 export function registerTextOutlineReveals(
   scope: Element | Document = document,
 ) {
   const elements = scope.querySelectorAll<HTMLElement>('.text-outline')
   const triggers: ScrollTrigger[] = []
-  const touchReveal = prefersTouchReveal()
 
   elements.forEach((el) => {
     const rgb = accentOf(el)
@@ -83,11 +44,6 @@ export function registerTextOutlineReveals(
     if (prefersReducedMotion()) {
       applyOutlineProgress(el, 1, rgb)
       el.classList.add('is-lit')
-      return
-    }
-
-    if (touchReveal) {
-      triggers.push(revealOutlineOnEnter(el, rgb))
       return
     }
 
@@ -100,6 +56,7 @@ export function registerTextOutlineReveals(
         start: 'top 85%',
         end: 'top 55%',
         scrub: 0.5,
+        invalidateOnRefresh: true,
         onUpdate: (self) => applyOutlineProgress(el, self.progress, rgb),
         onRefresh: (self) => applyOutlineProgress(el, self.progress, rgb),
         onLeaveBack: () => applyOutlineProgress(el, 0, rgb),

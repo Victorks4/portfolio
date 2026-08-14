@@ -21,6 +21,26 @@ export function useLenisGsapBridge(lenis: Lenis | null) {
       }
     }
 
+    const root = document.documentElement
+
+    ScrollTrigger.scrollerProxy(root, {
+      scrollTop(value) {
+        if (arguments.length && value != null) {
+          lenis.scrollTo(value, { immediate: true })
+        }
+        return lenis.scroll
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        }
+      },
+      pinType: root.style.transform ? 'transform' : 'fixed',
+    })
+
     const tickerFn = (time: number) => {
       lenis.raf(time * 1000)
     }
@@ -29,7 +49,15 @@ export function useLenisGsapBridge(lenis: Lenis | null) {
 
     const offScroll = lenis.on('scroll', ScrollTrigger.update)
 
+    const onRefresh = () => {
+      lenis.resize()
+    }
+    ScrollTrigger.addEventListener('refresh', onRefresh)
+    ScrollTrigger.refresh()
+
     return () => {
+      ScrollTrigger.removeEventListener('refresh', onRefresh)
+      ScrollTrigger.scrollerProxy(root, {})
       gsap.ticker.remove(tickerFn)
       offScroll()
     }
