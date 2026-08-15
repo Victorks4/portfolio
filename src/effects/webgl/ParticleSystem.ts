@@ -75,6 +75,7 @@ export class ParticleSystem {
         uMorphTarget1: { value: 0 },
         uMorphTarget2: { value: 0 },
         uMouse: { value: new THREE.Vector3() },
+        uAmbient: { value: 0 },
         uColor1: { value: new THREE.Color(0x00ffcc) },
         uColor2: { value: new THREE.Color(0x7000ff) },
       },
@@ -84,6 +85,7 @@ export class ParticleSystem {
         uniform int uMorphTarget1;
         uniform int uMorphTarget2;
         uniform vec3 uMouse;
+        uniform float uAmbient;
 
         attribute vec3 aPos0;
         attribute vec3 aPos1;
@@ -114,17 +116,21 @@ export class ParticleSystem {
             vec3 pos = mix(p1, p2, ease);
 
             vec3 curl = curlNoise(pos * 0.15 + uTime * 0.1);
-            pos += curl * 1.2;
+            float curlAmp = mix(1.2, 0.36, uAmbient);
+            pos += curl * curlAmp;
 
-            float dist = distance(pos.xy, uMouse.xy * 25.0);
-            if(dist < 10.0) {
-                vec3 dir = normalize(vec3(pos.xy - uMouse.xy * 25.0, pos.z));
-                float force = (10.0 - dist) / 10.0;
-                pos += dir * force * 4.0;
+            if (uAmbient < 0.5) {
+                float dist = distance(pos.xy, uMouse.xy * 25.0);
+                if(dist < 10.0) {
+                    vec3 dir = normalize(vec3(pos.xy - uMouse.xy * 25.0, pos.z));
+                    float force = (10.0 - dist) / 10.0;
+                    pos += dir * force * 4.0;
+                }
             }
 
             float spike = sin(uMorphProgress * 3.14159);
-            pos += curlNoise(pos + aRandom * 10.0) * spike * 5.0;
+            float spikeAmp = mix(5.0, 1.2, uAmbient);
+            pos += curlNoise(pos + aRandom * 10.0) * spike * spikeAmp;
 
             vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
             gl_Position = projectionMatrix * mvPosition;
@@ -177,12 +183,24 @@ export class ParticleSystem {
     })
   }
 
-  update(time: number, mouse: THREE.Vector2) {
-    this.material.uniforms.uTime.value = time
-    this.material.uniforms.uMouse.value.set(mouse.x, mouse.y, 0)
+  update(
+    time: number,
+    mouse: THREE.Vector2,
+    options?: { ambient?: boolean; perfLow?: boolean },
+  ) {
+    const ambient = options?.ambient ?? false
+    const perfLow = options?.perfLow ?? false
 
-    this.mesh.rotation.y = time * 0.05
-    this.mesh.rotation.x = Math.sin(time * 0.02) * 0.1
+    this.material.uniforms.uTime.value = time
+    this.material.uniforms.uAmbient.value = ambient ? 1 : 0
+
+    if (!ambient) {
+      this.material.uniforms.uMouse.value.set(mouse.x, mouse.y, 0)
+    }
+
+    const rotMul = ambient ? (perfLow ? 0.2 : 0.35) : 1
+    this.mesh.rotation.y = time * 0.05 * rotMul
+    this.mesh.rotation.x = Math.sin(time * 0.02) * 0.1 * rotMul
   }
 
   dispose() {

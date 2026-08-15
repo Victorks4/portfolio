@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Project } from '../../types/portfolio'
+import { markScrollTarget } from '../../utils/scrollTarget'
 
 type ProjectDetailHeroProps = {
   project: Project
@@ -12,7 +13,11 @@ export function ProjectDetailHero({ project }: ProjectDetailHeroProps) {
   // `header` para a navbar fixa, e um segundo header herdaria position: fixed.
   return (
     <div id="project-hero" className="project-detail-hero container">
-      <Link to="/#projects" className="project-back hover-target">
+      <Link
+        to="/#projects"
+        className="project-back hover-target"
+        onClick={() => markScrollTarget('#projects')}
+      >
         <svg viewBox="0 0 24 24" aria-hidden>
           <path
             d="M19 12H5M12 19l-7-7 7-7"

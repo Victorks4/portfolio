@@ -8,6 +8,7 @@ import { ProjectGalleryGrid } from '../components/projects/ProjectGalleryGrid'
 import { useProjectDetailAnimations } from '../hooks/useProjectDetailAnimations'
 import { absoluteUrl } from '../utils/siteUrl'
 import { hexToRgbTriplet } from '../utils/color'
+import { markScrollTarget } from '../utils/scrollTarget'
 
 const items = portfolio.projects.items
 
@@ -184,7 +185,11 @@ export function ProjectDetailPage() {
         ) : null}
 
         <nav className="container project-detail-footer" aria-label="Outros projetos">
-          <Link to="/#projects" className="project-back hover-target">
+          <Link
+            to="/#projects"
+            className="project-back hover-target"
+            onClick={() => markScrollTarget('#projects')}
+          >
             <svg viewBox="0 0 24 24" aria-hidden>
               <path
                 d="M19 12H5M12 19l-7-7 7-7"

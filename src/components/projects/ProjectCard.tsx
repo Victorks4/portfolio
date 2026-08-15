@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import type { Project } from '../../types/portfolio'
+import { markScrollTarget } from '../../utils/scrollTarget'
 
 type ProjectCardProps = {
   project: Project
@@ -15,6 +16,7 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const num = String(index + 1).padStart(2, '0')
   const href = `/projetos/${project.slug}`
+  const markReturnToProjects = () => markScrollTarget('#projects')
 
   return (
     <article
@@ -56,6 +58,7 @@ export function ProjectCard({
             to={href}
             className="project-card-link hover-target"
             tabIndex={isActive ? 0 : -1}
+            onClick={markReturnToProjects}
           >
             {project.title}
           </Link>
@@ -93,6 +96,7 @@ export function ProjectCard({
         className="project-card-hitbox hover-target"
         tabIndex={-1}
         aria-hidden
+        onClick={markReturnToProjects}
       />
     </article>
   )

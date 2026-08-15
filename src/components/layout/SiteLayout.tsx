@@ -128,7 +128,7 @@ export function SiteLayout() {
             lenis={lenis}
             perfConfig={perfConfig}
             onReady={onWebglReady}
-            viewportAnchor={isHome ? '#hero' : '#project-hero'}
+            heroAnchor={isHome ? '#hero' : '#project-hero'}
           />
         </Suspense>
       )}

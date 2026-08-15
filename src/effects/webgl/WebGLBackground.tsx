@@ -12,22 +12,20 @@ type WebGLBackgroundProps = {
   lenis: Lenis | null
   perfConfig: PerformanceConfig
   onReady?: (api: WebGLApi) => void
-  /**
-   * Elemento cuja visibilidade mantém o render rodando. Quando ele sai da tela
-   * o RAF para de desenhar, economizando GPU no resto da página.
-   */
-  viewportAnchor?: string
+  /** Hero da rota atual — modo completo enquanto visível. */
+  heroAnchor?: string
 }
 
 export function WebGLBackground({
   lenis,
   perfConfig,
   onReady,
-  viewportAnchor = '#hero',
+  heroAnchor = '#hero',
 }: WebGLBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const coreRef = useRef<WebGLCore | null>(null)
-  const inViewRef = useRef(true)
+  const pageActiveRef = useRef(true)
+  const heroActiveRef = useRef(true)
   const visibleRef = useRef(true)
 
   useEffect(() => {
@@ -41,6 +39,7 @@ export function WebGLBackground({
     })
     coreRef.current = core
     const particles = new ParticleSystem(core, perfConfig.particleCount)
+    const perfLow = perfConfig.tier === 'low'
 
     const api: WebGLApi = {
       setMorphTarget: (index: number) => particles.setMorphTarget(index),
@@ -52,9 +51,10 @@ export function WebGLBackground({
     visibleRef.current = !document.hidden
 
     const loop = () => {
-      if (running && visibleRef.current && inViewRef.current) {
+      if (running && visibleRef.current && pageActiveRef.current) {
         const t = core.clock.getElapsedTime()
-        particles.update(t, core.mouse)
+        const ambient = !heroActiveRef.current
+        particles.update(t, core.mouse, { ambient, perfLow })
         core.render()
       }
       raf = requestAnimationFrame(loop)
@@ -77,25 +77,46 @@ export function WebGLBackground({
   }, [onReady, perfConfig])
 
   useEffect(() => {
-    const anchor = document.querySelector(viewportAnchor)
-    if (!anchor) {
-      inViewRef.current = true
+    const page = document.querySelector('#conteudo')
+    if (!page) {
+      pageActiveRef.current = true
       return
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        inViewRef.current = entry.isIntersecting
+        pageActiveRef.current = entry.isIntersecting
       },
       { root: null, rootMargin: '0px', threshold: 0 },
     )
-    observer.observe(anchor)
+    observer.observe(page)
 
     return () => {
       observer.disconnect()
-      inViewRef.current = true
+      pageActiveRef.current = true
     }
-  }, [viewportAnchor])
+  }, [])
+
+  useEffect(() => {
+    const hero = document.querySelector(heroAnchor)
+    if (!hero) {
+      heroActiveRef.current = true
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        heroActiveRef.current = entry.isIntersecting
+      },
+      { root: null, rootMargin: '0px', threshold: 0 },
+    )
+    observer.observe(hero)
+
+    return () => {
+      observer.disconnect()
+      heroActiveRef.current = true
+    }
+  }, [heroAnchor])
 
   useEffect(() => {
     const core = coreRef.current

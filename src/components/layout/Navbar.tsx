@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import type { NavItem } from '../../types/portfolio'
 import { useLenisContext } from '../../hooks/useLenisContext'
+import { markScrollTarget } from '../../utils/scrollTarget'
 
 type NavbarProps = {
   logoLabel: string
@@ -46,6 +47,7 @@ export function Navbar({ logoLabel, items, contactCta }: NavbarProps) {
     if (isHome) {
       scrollToHash(href)
     } else {
+      markScrollTarget(href)
       routerNavigate(`/${href}`)
     }
   }
