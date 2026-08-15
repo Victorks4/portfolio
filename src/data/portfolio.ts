@@ -219,14 +219,27 @@ export const portfolio: Portfolio = {
   projects: {
     sectionNumber: '03 // EXECUTE',
     sectionTitle: 'Projetos Destaque',
+    sectionKicker: 'Projetos reais',
+    sectionIntro:
+      'Sistemas desenvolvidos para solucionar problemas e otimizar processos internos — necessidades reais de clientes e instituições, não apenas exercícios de portfólio.',
     items: [
       {
         slug: 'bellabot',
         title: 'BellaBot',
         role: 'IA & Automação',
-        highlight: 'Atendimento 24/7 via WhatsApp',
+        scope: {
+          kind: 'client',
+          badge: 'Projeto real · Cliente',
+          organization: 'Bella Beauty',
+        },
+        highlight: 'Em produção',
         description:
-          'Assistente virtual com Gemini e SQLite que mantém contexto conversacional, reduzindo tempo de resposta em canais de atendimento.',
+          'Assistente virtual em produção no WhatsApp do Bella Beauty, automatizando atendimento fora do horário com IA contextual, memória de conversa e escalonamento para humano.',
+        impactMetrics: [
+          { value: '24/7', label: 'atendimento no WhatsApp' },
+          { value: 'Em prod.', label: 'salão Bella Beauty' },
+          { value: 'IA', label: 'contexto por conversa' },
+        ],
         tech: ['WhatsApp API', 'Gemini API', 'Python', 'SQLite'],
         color: '#b83a5c',
         shapeClass: 'shape-bellabot',
@@ -239,9 +252,19 @@ export const portfolio: Portfolio = {
         slug: 'smart-key',
         title: 'Smart Key',
         role: 'Full Stack Web',
-        highlight: 'Iniciativa de estágio · chaves',
+        scope: {
+          kind: 'institutional',
+          badge: 'Projeto real · SENAI',
+          organization: 'SENAI',
+        },
+        highlight: 'Em produção',
         description:
-          'Projeto que propus no estágio no SENAI: substitui a folha de papel na portaria por retirada digital, com painéis de admin e professor.',
+          'Sistema de controle de chaves para uso interno no SENAI, substituindo folha de papel por retirada digital com histórico auditável, status em tempo real e menos fila na portaria.',
+        impactMetrics: [
+          { value: 'Em prod.', label: 'uso interno no SENAI' },
+          { value: '2', label: 'perfis operacionais' },
+          { value: '100%', label: 'movimentações rastreadas' },
+        ],
         tech: ['Node.js', 'Firebase', 'React', 'Tailwind'],
         color: '#ffca28',
         shapeClass: 'shape-smartkey',
@@ -253,9 +276,19 @@ export const portfolio: Portfolio = {
         slug: 'pontify',
         title: 'PontiFy',
         role: 'SaaS Platform',
-        highlight: 'Iniciativa de estágio · ponto',
+        scope: {
+          kind: 'institutional',
+          badge: 'Projeto real · SENAI',
+          organization: 'SENAI',
+        },
+        highlight: 'Em desenvolvimento',
         description:
-          'Projeto que propus no estágio no SENAI: substitui planilhas por perfis Administrador, Gestor, Colaborador e RH com relatórios no banco.',
+          'Sistema de controle de frequência para uso interno no SENAI, automatizando registros de ponto, cálculo de saldo de horas, aprovação de ausências e geração de relatórios.',
+        impactMetrics: [
+          { value: '4', label: 'perfis operacionais' },
+          { value: 'Auto', label: 'cálculo de saldo' },
+          { value: '0', label: 'planilhas no fechamento' },
+        ],
         tech: ['Next.js', 'Tailwind CSS', 'NestJS', 'PostgreSQL'],
         color: '#4d9fff',
         shapeClass: 'shape-pontify',
@@ -267,9 +300,18 @@ export const portfolio: Portfolio = {
         slug: 'origyn',
         title: 'Origyn',
         role: 'E-commerce & 3D',
-        highlight: 'Provador virtual com avatar 3D',
+        scope: {
+          kind: 'product',
+          badge: 'Produto próprio',
+        },
+        highlight: 'Em desenvolvimento',
         description:
-          'Loja de roupas femininas e unissex com provador virtual: um avatar 3D ajustado às medidas do cliente mostra o caimento real da peça antes da compra.',
+          'E-commerce de moda com provador virtual 3D, automatizando a escolha de tamanho com avatar parametrizado e visualização do caimento antes da compra.',
+        impactMetrics: [
+          { value: '3D', label: 'avatar personalizado' },
+          { value: '360°', label: 'visualização do caimento' },
+          { value: 'Meta', label: 'menos devoluções por tamanho' },
+        ],
         tech: ['React', 'Three.js', 'NestJS', 'PostgreSQL'],
         color: '#ff2d78',
         shapeClass: 'shape-origyn',

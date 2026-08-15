@@ -50,9 +50,12 @@ export function ProjectCard({
       </div>
       <div className="project-info">
         <span className="project-role">{project.role}</span>
-        {project.highlight ? (
-          <span className="project-highlight">{project.highlight}</span>
-        ) : null}
+        <div className="project-badges">
+          <span className="project-scope-badge">{project.scope.badge}</span>
+          {project.highlight ? (
+            <span className="project-highlight">{project.highlight}</span>
+          ) : null}
+        </div>
         <h3 className="project-title" title={project.title}>
           <Link
             to={href}
@@ -66,6 +69,16 @@ export function ProjectCard({
         <p className="project-desc" title={project.description}>
           {project.description}
         </p>
+        {project.impactMetrics.length > 0 ? (
+          <dl className="project-impact-metrics" aria-label="Impacto do projeto">
+            {project.impactMetrics.map((metric) => (
+              <div key={metric.label} className="project-impact-metric">
+                <dt className="project-impact-value">{metric.value}</dt>
+                <dd className="project-impact-label">{metric.label}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
         <div className="project-tech-list">
           {project.tech.map((t) => (
             <span key={t} className="project-tech-item">

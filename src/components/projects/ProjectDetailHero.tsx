@@ -33,13 +33,41 @@ export function ProjectDetailHero({ project }: ProjectDetailHeroProps) {
 
       <span className="project-detail-eyebrow">{project.role}</span>
 
+      <div className="project-detail-badges">
+        <span className="project-scope-badge project-scope-badge--hero">
+          {project.scope.badge}
+        </span>
+        {project.highlight ? (
+          <span className="project-highlight project-highlight--hero">
+            {project.highlight}
+          </span>
+        ) : null}
+      </div>
+
       <h1 className="project-detail-title font-display text-outline">
         {project.title}
       </h1>
 
       <p className="project-detail-tagline">{detail.tagline}</p>
 
+      {project.impactMetrics.length > 0 ? (
+        <dl className="project-detail-impact" aria-label="Impacto do projeto">
+          {project.impactMetrics.map((metric) => (
+            <div key={metric.label} className="project-impact-metric">
+              <dt className="project-impact-value">{metric.value}</dt>
+              <dd className="project-impact-label">{metric.label}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+
       <dl className="project-detail-meta">
+        {project.scope.organization ? (
+          <div className="project-detail-meta-item">
+            <dt>Para quem</dt>
+            <dd>{project.scope.organization}</dd>
+          </div>
+        ) : null}
         <div className="project-detail-meta-item">
           <dt>Ano</dt>
           <dd>{detail.year}</dd>

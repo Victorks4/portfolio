@@ -31,6 +31,19 @@ export type SkillCategory = {
   items: SkillItem[]
 }
 
+export type ProjectScopeKind = 'institutional' | 'client' | 'product'
+
+export type ProjectScope = {
+  kind: ProjectScopeKind
+  badge: string
+  organization?: string
+}
+
+export type ProjectImpactMetric = {
+  value: string
+  label: string
+}
+
 export type ProjectSlug = 'bellabot' | 'smart-key' | 'pontify' | 'origyn'
 
 export type ProjectShape =
@@ -95,8 +108,13 @@ export type Project = {
   slug: ProjectSlug
   title: string
   role: string
+  /** Selo de credibilidade — ex: Projeto real · SENAI */
+  scope: ProjectScope
   highlight?: string
+  /** Linha de impacto: o que o sistema automatiza e entrega. */
   description: string
+  /** Métricas rápidas para o recrutador (valor · rótulo). */
+  impactMetrics: ProjectImpactMetric[]
   tech: string[]
   color: string
   shapeClass: ProjectShape
@@ -172,6 +190,8 @@ export type Portfolio = {
   projects: {
     sectionNumber: string
     sectionTitle: string
+    sectionKicker: string
+    sectionIntro: string
     items: Project[]
   }
   timeline: {

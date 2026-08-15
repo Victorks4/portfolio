@@ -103,6 +103,20 @@ export function ProjectDetailPage() {
           <p className="project-detail-lead reveal-text">{detail.solution}</p>
         </section>
 
+        {detail.results && detail.results.length > 0 ? (
+          <section className="container project-detail-section">
+            <h2 className="project-detail-heading reveal-text">Impacto</h2>
+            <div className="project-result-grid">
+              {detail.results.map((result) => (
+                <div key={result.label} className="project-result reveal-text">
+                  <span className="project-result-value">{result.value}</span>
+                  <span className="project-result-label">{result.label}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <section className="container project-detail-section">
           <h2 className="project-detail-heading reveal-text">Interface</h2>
           <ProjectGalleryGrid project={project} />
@@ -169,20 +183,6 @@ export function ProjectDetailPage() {
             ))}
           </div>
         </section>
-
-        {detail.results && detail.results.length > 0 ? (
-          <section className="container project-detail-section">
-            <h2 className="project-detail-heading reveal-text">Resultados</h2>
-            <div className="project-result-grid">
-              {detail.results.map((result) => (
-                <div key={result.label} className="project-result reveal-text">
-                  <span className="project-result-value">{result.value}</span>
-                  <span className="project-result-label">{result.label}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
 
         <nav className="container project-detail-footer" aria-label="Outros projetos">
           <Link

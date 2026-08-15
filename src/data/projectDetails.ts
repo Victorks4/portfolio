@@ -11,35 +11,53 @@ import type { ProjectDetail, ProjectSlug } from '../types/portfolio'
 export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
   bellabot: {
     tagline:
-      'Assistente virtual no WhatsApp que entende contexto e responde como gente.',
+      'Automatiza o atendimento do Bella Beauty no WhatsApp — 24/7, com contexto e escalonamento para humano.',
     year: '2025',
     status: 'Em produção',
     context:
-      'Nasceu da necessidade de atender clientes no WhatsApp fora do horário comercial, sem contratar um time de plantão. O WhatsApp é o canal onde o cliente brasileiro realmente está, mas responder manualmente não escala.',
+      'Projeto real desenvolvido para o salão Bella Beauty: clientes mandavam mensagem no WhatsApp fora do horário e ficavam sem resposta até o dia seguinte. Contratar plantão humano não fazia sentido para o volume, mas perder o contato custava agendamento. Construí a BellaBot para automatizar esse canal com IA.',
     problem:
-      'Os atendimentos chegavam a qualquer hora e ficavam sem resposta até o dia seguinte. Chatbots de árvore de decisão resolviam mal: o cliente escrevia livremente, o bot não entendia, e a conversa morria. Além disso, cada nova mensagem começava do zero, sem lembrar do que já tinha sido dito.',
+      'Mensagens chegavam à noite e no fim de semana e ficavam sem retorno até o dia seguinte. Chatbots de menu numerado não entendiam texto livre e a conversa morria na primeira resposta fora do script. Cada nova mensagem começava do zero, sem lembrar o que o cliente já tinha perguntado.',
     solution:
-      'Construí um assistente que conecta a API do WhatsApp ao Google Gemini para interpretar linguagem natural, com uma camada de persistência em SQLite que guarda o histórico de cada conversa. O bot lembra do contexto anterior, mantém o fio da conversa entre mensagens e escala o atendimento para um humano quando detecta que não deve decidir sozinho.',
+      'Construí a BellaBot conectando a API do WhatsApp ao Google Gemini, com histórico persistido em SQLite por contato. O assistente interpreta linguagem natural, mantém o fio da conversa entre mensagens e escala para atendimento humano quando a solicitação sai do escopo seguro.',
     features: [
       {
-        title: 'Compreensão de linguagem natural',
+        title: 'Resposta em linguagem natural',
         description:
-          'O cliente escreve como falaria com uma pessoa. A intenção é interpretada pelo Gemini, sem menus numerados ou palavras-chave exatas.',
+          'O cliente escreve como falaria com uma pessoa. O Gemini interpreta a intenção sem menus numerados ou palavras-chave exatas.',
       },
       {
-        title: 'Memória de conversa',
+        title: 'Memória por contato',
         description:
-          'Cada contato tem seu histórico persistido em SQLite, então o assistente entende referências a mensagens anteriores dentro da mesma conversa.',
+          'Cada conversa fica salva em SQLite, então o assistente entende referências a mensagens anteriores na mesma thread.',
       },
       {
         title: 'Disponibilidade contínua',
         description:
-          'Atendimento ativo 24 horas por dia, incluindo fins de semana e feriados, sem custo por hora de plantão.',
+          'Atendimento ativo 24 horas por dia, incluindo fins de semana e feriados, sem custo de plantão humano.',
       },
       {
         title: 'Escalonamento para humano',
         description:
-          'Quando a solicitação sai do escopo seguro, a conversa é encaminhada para atendimento humano em vez de arriscar uma resposta errada.',
+          'Quando a solicitação sai do escopo seguro, a conversa é encaminhada para atendimento humano em vez de arriscar resposta errada.',
+      },
+    ],
+    results: [
+      {
+        value: '24/7',
+        label: 'atendimento no WhatsApp, inclusive fora do horário do salão',
+      },
+      {
+        value: '0',
+        label: 'menus numerados — o cliente escreve em linguagem natural',
+      },
+      {
+        value: '100%',
+        label: 'das conversas com histórico persistido por contato',
+      },
+      {
+        value: 'Auto',
+        label: 'escalonamento para humano quando a IA não deve decidir sozinha',
       },
     ],
     architecture: [
@@ -84,11 +102,11 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
 
   'smart-key': {
     tagline:
-      'Iniciativa de estágio: controle de chaves sem fila na folha de papel.',
+      'Automatiza a retirada de chaves no SENAI — histórico, status em tempo real e fim da fila no papel.',
     year: '2025',
     status: 'Em produção',
     context:
-      'Durante meu estágio no SENAI, vi de perto como a retirada de chaves funcionava: uma folha impressa na mesa, fila na portaria, cada pessoa procurando o próprio nome, conferindo turma e disciplina e assinando à mão. No horário de troca de aula, o gargalo era visível. Propus e desenvolvi o Smart Key por conta própria, como solução para substituir esse ritual no papel. Não é um produto oficial da instituição.',
+      'Projeto real desenvolvido durante meu estágio no SENAI: a retirada de chaves dependia de uma folha impressa na portaria — fila, caça ao nome, assinatura à mão e ninguém sabia em tempo real quem estava com qual chave. No horário de troca de aula, o gargalo era visível. Propus e desenvolvi o Smart Key para digitalizar esse fluxo. É uma iniciativa de estágio, não um produto oficial da instituição.',
     problem:
       'O papel não aguenta o pico: cada retirada dependia de caça ao nome, a fila crescia e ninguém enxergava em tempo real quem estava com qual chave. Assinatura ilegível, linha errada e devolução esquecida viravam problema sem dono claro. Reconstituir o que aconteceu no dia exigia folhear a folha e adivinhar.',
     solution:
@@ -113,6 +131,24 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
         title: 'Fluxo pensado para o balcão',
         description:
           'Retirada, devolução e registro de terceiros em poucos toques, porque o uso real acontece com gente esperando na fila.',
+      },
+    ],
+    results: [
+      {
+        value: '0',
+        label: 'folhas de papel na portaria — cada movimentação fica no sistema',
+      },
+      {
+        value: '100%',
+        label: 'das retiradas e devoluções com responsável, sala e horário registrados',
+      },
+      {
+        value: 'Tempo real',
+        label: 'status de cada chave visível em todos os postos sem refresh',
+      },
+      {
+        value: '2',
+        label: 'perfis operacionais (administração e professor) com escopo separado',
       },
     ],
     architecture: [
@@ -170,35 +206,53 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
 
   pontify: {
     tagline:
-      'Iniciativa de estágio: controle de ponto com quatro níveis de acesso.',
+      'Automatiza o ponto de estagiários no SENAI — registros, saldo, ausências e relatórios sem planilha.',
     year: '2026',
     status: 'Em desenvolvimento',
     context:
-      'Durante meu estágio no SENAI, o controle de ponto passava por planilhas: abrir arquivo, copiar linha, conferir horário, corrigir na mão e repetir no fim do mês. Funcionava, mas consumia tempo de quem deveria estar cuidando de outras coisas. Propus e desenvolvi o PontiFy por conta própria para substituir esse fluxo manual. Não é um produto oficial da instituição.',
+      'Projeto real desenvolvido durante meu estágio no SENAI: o controle de frequência de estagiários dependia de planilhas compartilhadas — cada marcação copiada manualmente, saldo conferido na mão e fechamento mensal consumindo tempo de gestores e RH. Propus e desenvolvi o PontiFy para automatizar registros, cálculo de saldo e geração de relatórios. É uma iniciativa de estágio, não um produto oficial da instituição.',
     problem:
-      'A planilha não escala e não protege dado: qualquer um com acesso ao arquivo enxerga todo mundo, correção vira caça ao erro, e o gestor não tem um fluxo claro para aprovar compensação ou ausência. Fechar o mês era trabalho repetitivo que dependia de memória e de fórmula bem montada.',
+      'A planilha não dá visibilidade em tempo real: o gestor não sabe quem está devendo horas sem abrir o arquivo, o estagiário não consulta o próprio saldo sozinho e qualquer correção vira caça ao erro entre versões. Ausências e compensações dependiam de mensagem ou e-mail, sem trilha única. Fechar o mês era trabalho repetitivo e sujeito a inconsistência.',
     solution:
-      'Construí um sistema de ponto com quatro perfis (Administrador, Gestor, Colaborador e RH), cada um com o que precisa ver e fazer. O colaborador registra e acompanha o próprio saldo, o gestor aprova solicitações do time, o RH audita e corrige com rastro, e a administração consolida tudo sem voltar para planilha.',
+      'Desenvolvi um sistema de ponto com quatro perfis — Administrador, Gestor, Colaborador e RH — cada um com o que precisa ver e fazer. O estagiário registra a jornada e acompanha o saldo; o gestor aprova ausências e compensações do time; o RH audita e corrige com rastro; a administração consolida relatórios por período direto do PostgreSQL, sem exportar planilha.',
     features: [
       {
-        title: 'Quatro níveis de acesso',
+        title: 'Registro e saldo em tempo real',
         description:
-          'Administrador, Gestor, Colaborador e RH com permissões separadas. Cada perfil enxerga apenas o escopo que lhe cabe.',
+          'O estagiário marca entrada, saída e intervalos e vê o saldo de horas na hora, sem depender do gestor para uma planilha atualizada.',
       },
       {
-        title: 'Registro de jornada',
+        title: 'Aprovação de ausências e compensações',
         description:
-          'Marcação de entrada, saída e intervalos, com o histórico individual disponível para o próprio colaborador.',
+          'O gestor recebe solicitações do time e aprova ou recusa em um fluxo único, substituindo troca de mensagem e anotação solta.',
       },
       {
-        title: 'Relatórios dinâmicos',
+        title: 'Auditoria pelo RH',
         description:
-          'Consolidação por período e por colaborador, gerada direto do banco em vez de exportação manual.',
+          'Correções de marcação passam pelo RH e ficam registradas, com histórico de quem alterou o quê e quando.',
       },
       {
-        title: 'Correção auditável pelo RH',
+        title: 'Relatórios por período',
         description:
-          'Ajustes de marcação passam pelo RH e ficam registrados, preservando o rastro do que foi alterado.',
+          'Consolidação por colaborador e por mês gerada do banco, eliminando o fechamento manual em planilha.',
+      },
+    ],
+    results: [
+      {
+        value: '4',
+        label: 'perfis com permissão separada (Admin, Gestor, Colaborador, RH)',
+      },
+      {
+        value: '0',
+        label: 'planilhas no fechamento mensal — dados centralizados no banco',
+      },
+      {
+        value: '100%',
+        label: 'das correções de ponto com rastro auditável pelo RH',
+      },
+      {
+        value: '24/7',
+        label: 'consulta de saldo de horas pelo próprio estagiário',
       },
     ],
     architecture: [
@@ -267,40 +321,53 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
 
   origyn: {
     tagline:
-      'E-commerce de moda com provador virtual em 3D ajustado às suas medidas.',
+      'Automatiza a escolha de tamanho no e-commerce — provador 3D com caimento real antes da compra.',
     year: '2026',
     status: 'Em desenvolvimento',
     context:
-      'Loja de roupas femininas e unissex nascida para resolver a maior dor de comprar moda online: não dá para experimentar antes. A tabela de medidas em texto não responde a pergunta que o cliente realmente faz, que é como a peça vai ficar nele.',
+      'Loja de roupas femininas e unissex criada para resolver a maior dor de comprar moda online: não dá para experimentar antes. A tabela de medidas em texto não responde à pergunta real do cliente — como a peça vai ficar no corpo dele.',
     problem:
-      'No e-commerce de moda, a devolução por caimento é o principal motivo de perda. O cliente escolhe o tamanho no chute a partir de uma tabela genérica, recebe a peça, não serve, e devolve. O custo da logística reversa recai sobre a loja, e a experiência ruim afasta a recompra.',
+      'No e-commerce de moda, devolução por caimento é o principal motivo de perda. O cliente escolhe o tamanho no chute a partir de uma tabela genérica, recebe a peça, não serve e devolve. A logística reversa custa caro para a loja e a experiência ruim afasta a recompra.',
     solution:
-      'Estou construindo uma loja completa onde o cliente informa suas medidas e um avatar 3D é gerado com aquele corpo. A peça é vestida nesse avatar, permitindo girar, aproximar e ver o caimento real antes de comprar, trocando a tabela de medidas por uma resposta visual concreta.',
+      'Estou construindo uma loja completa onde o cliente informa suas medidas e um avatar 3D é gerado com aquele corpo. A peça é vestida nesse avatar, permitindo girar, aproximar e ver o caimento real antes de comprar — trocando a tabela de medidas por uma resposta visual concreta.',
     features: [
       {
-        title: 'Provador virtual com avatar 3D',
+        title: 'Avatar 3D personalizado',
         description:
-          'O cliente informa suas medidas e o avatar é parametrizado com aquele corpo, mostrando como a peça veste naquele manequim específico e não num modelo padrão.',
+          'O cliente informa as medidas e o manequim é parametrizado com aquele corpo, mostrando caimento no corpo real e não num modelo padrão.',
       },
       {
-        title: 'Visualização interativa',
+        title: 'Visualização interativa do caimento',
         description:
           'A peça vestida pode ser girada e aproximada, revelando comprimento, folga e caimento de ângulos que a foto de catálogo não mostra.',
       },
       {
-        title: 'Catálogo feminino e unissex',
-        description:
-          'Navegação por categoria e coleção, com as peças modeladas para funcionar no provador em diferentes tipos de corpo.',
-      },
-      {
         title: 'Recomendação de tamanho',
         description:
-          'A partir das medidas informadas, a loja indica o tamanho com melhor caimento em vez de deixar a decisão inteiramente no chute do cliente.',
+          'A partir das medidas informadas, a loja indica o tamanho com melhor caimento em vez de deixar a decisão no chute.',
       },
       {
-        title: 'Fluxo de compra completo',
+        title: 'Compra sem quebrar o fluxo',
         description:
-          'Carrinho, checkout e gestão de pedidos integrados à experiência do provador, sem quebrar o fluxo até a finalização.',
+          'Carrinho, checkout e gestão de pedidos integrados ao provador, da experimentação até a finalização.',
+      },
+    ],
+    results: [
+      {
+        value: '3D',
+        label: 'visualização do caimento antes de adicionar ao carrinho',
+      },
+      {
+        value: '1',
+        label: 'avatar parametrizado pelas medidas reais do cliente',
+      },
+      {
+        value: '360°',
+        label: 'rotação da peça vestida para inspecionar folga e comprimento',
+      },
+      {
+        value: 'Meta',
+        label: 'reduzir devoluções por caimento errado antes de fechar a compra',
       },
     ],
     architecture: [

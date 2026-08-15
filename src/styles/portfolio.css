@@ -538,6 +538,33 @@ body.is-mobile #projects > .section-header {
     -webkit-backdrop-filter: blur(12px);
 }
 
+.projects-section-intro {
+    max-width: 52ch;
+    margin-top: var(--space-md);
+}
+
+.projects-section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    margin-bottom: var(--space-sm);
+    border-radius: 999px;
+    border: 1px solid rgba(0, 255, 204, 0.35);
+    background: rgba(0, 255, 204, 0.08);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent-cyan);
+}
+
+.projects-section-lead {
+    font-size: var(--text-base);
+    line-height: 1.65;
+    color: var(--color-text-secondary);
+}
+
 .section-title {
     font-size: var(--text-xxl);
     line-height: 1;
@@ -675,29 +702,36 @@ header.hidden {
     letter-spacing: 0.1em;
     padding: 0.5rem 1rem;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     display: inline-block;
+    transition: color 0.3s var(--ease-out-expo), transform 0.3s var(--ease-out-expo);
 }
 
 .nav-link::before {
     content: '/>';
     position: absolute;
-    left: -15px;
+    left: 0.15rem;
+    top: 50%;
     opacity: 0;
     color: var(--color-accent-cyan);
-    transition: all 0.3s var(--ease-out-expo);
-    transform: translateX(-10px);
+    transition: opacity 0.3s var(--ease-out-expo), transform 0.3s var(--ease-out-expo);
+    transform: translate(-110%, -50%);
     font-weight: 700;
+    pointer-events: none;
+    white-space: nowrap;
 }
 
-.nav-link:hover::before {
+.nav-link:hover::before,
+.nav-link.is-active::before {
     opacity: 1;
-    transform: translateX(15px);
+    transform: translate(0, -50%);
 }
 
-.nav-link:hover {
-    transform: translateX(10px);
+.nav-link:hover,
+.nav-link.is-active {
+    transform: translateX(4px);
     color: var(--color-accent-cyan);
+    padding-left: calc(1rem + 1.35em);
 }
 
 .menu-btn {
@@ -1521,8 +1555,91 @@ header.hidden {
     color: var(--project-color, var(--color-accent-cyan));
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: var(--space-2xs);
     opacity: 0.9;
+}
+
+.project-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: var(--space-2xs);
+}
+
+.project-scope-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-primary);
+    line-height: 1.2;
+}
+
+.project-scope-badge--hero {
+    font-size: var(--text-xs);
+    padding: 0.4rem 0.85rem;
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.project-highlight--hero {
+    margin-bottom: 0;
+}
+
+.project-detail-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: var(--space-sm);
+}
+
+.project-impact-metrics,
+.project-detail-impact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin: 0 0 var(--space-md);
+    padding: 0;
+}
+
+.project-detail-impact {
+    margin-top: var(--space-md);
+    margin-bottom: 0;
+}
+
+.project-impact-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    padding: 0.55rem 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border-subtle);
+    background: rgba(0, 0, 0, 0.28);
+}
+
+.project-impact-value {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    line-height: 1;
+    color: var(--project-color, var(--color-accent-cyan));
+    margin: 0;
+}
+
+.project-impact-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    line-height: 1.35;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: 0;
 }
 
 .project-role {
@@ -2373,15 +2490,6 @@ button:focus-visible,
     background: var(--color-accent-cyan);
     color: #030305;
     box-shadow: 0 8px 24px var(--color-glow-cyan);
-}
-
-.nav-link.is-active {
-    color: var(--color-accent-cyan);
-}
-
-.nav-link.is-active::before {
-    opacity: 1;
-    transform: translateX(15px);
 }
 
 .contact-status {

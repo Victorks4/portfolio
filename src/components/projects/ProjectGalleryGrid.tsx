@@ -18,6 +18,21 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
+function ensureImageLoaded(src: string, cache: Set<string>): Promise<void> {
+  if (cache.has(src)) return Promise.resolve()
+
+  return new Promise((resolve) => {
+    const img = new Image()
+    const done = () => {
+      cache.add(src)
+      resolve()
+    }
+    img.onload = done
+    img.onerror = done
+    img.src = src
+  })
+}
+
 export function ProjectGalleryGrid({ project }: ProjectGalleryGridProps) {
   const { gallery } = project.detail
   const [index, setIndex] = useState(0)
@@ -28,6 +43,7 @@ export function ProjectGalleryGrid({ project }: ProjectGalleryGridProps) {
   const captionRef = useRef<HTMLElement>(null)
   const counterRef = useRef<HTMLParagraphElement>(null)
   const isAnimating = useRef(false)
+  const imageCacheRef = useRef(new Set<string>())
 
   const navigate = useCallback(
     (next: number, direction: number) => {
@@ -51,15 +67,29 @@ export function ProjectGalleryGrid({ project }: ProjectGalleryGridProps) {
 
       isAnimating.current = true
       const targets = caption ? [media, caption] : [media]
+      const nextSrc = gallery[wrapped].src
+      gsap.killTweensOf(targets)
+      if (counter) gsap.killTweensOf(counter)
 
-      gsap.to(targets, {
-        opacity: 0,
-        x: direction * -48,
-        scale: 0.97,
-        duration: 0.28,
-        ease: 'power2.in',
-        onComplete: () => {
-          setIndex(wrapped)
+      const fadeOut = new Promise<void>((resolve) => {
+        gsap.to(targets, {
+          opacity: 0,
+          x: direction * -28,
+          scale: 0.98,
+          duration: 0.16,
+          ease: 'power2.in',
+          onComplete: () => resolve(),
+        })
+      })
+
+      Promise.all([
+        fadeOut,
+        ensureImageLoaded(nextSrc, imageCacheRef.current),
+      ]).then(() => {
+        setIndex(wrapped)
+
+        requestAnimationFrame(() => {
+          gsap.set(targets, { x: direction * 28, scale: 0.98, opacity: 0 })
 
           const tl = gsap.timeline({
             onComplete: () => {
@@ -67,30 +97,26 @@ export function ProjectGalleryGrid({ project }: ProjectGalleryGridProps) {
             },
           })
 
-          tl.fromTo(
-            targets,
-            { opacity: 0, x: direction * 56, scale: 0.97 },
-            {
-              opacity: 1,
-              x: 0,
-              scale: 1,
-              duration: 0.42,
-              ease: 'power3.out',
-            },
-          )
+          tl.to(targets, {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 0.24,
+            ease: 'power2.out',
+          })
 
           if (counter) {
             tl.fromTo(
               counter,
-              { opacity: 0.4, y: 6 },
-              { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' },
-              '-=0.3',
+              { opacity: 0.5, y: 4 },
+              { opacity: 1, y: 0, duration: 0.2, ease: 'power2.out' },
+              '-=0.16',
             )
           }
-        },
+        })
       })
     },
-    [gallery.length, index],
+    [gallery, index],
   )
 
   const goTo = useCallback(
@@ -123,7 +149,14 @@ export function ProjectGalleryGrid({ project }: ProjectGalleryGridProps) {
   useEffect(() => {
     setIndex(0)
     isAnimating.current = false
+    imageCacheRef.current.clear()
   }, [project.slug])
+
+  useEffect(() => {
+    gallery.forEach((item) => {
+      void ensureImageLoaded(item.src, imageCacheRef.current)
+    })
+  }, [gallery])
 
   useEffect(() => {
     if (gallery.length <= 1) return
@@ -256,8 +289,9 @@ export function ProjectGalleryGrid({ project }: ProjectGalleryGridProps) {
             <img
               src={current.src}
               alt={current.alt}
-              decoding="async"
-              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="sync"
+              loading="eager"
+              fetchPriority={index === 0 ? 'high' : 'auto'}
             />
           </div>
           {current.caption ? (

@@ -75,6 +75,10 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
         <h2 className="section-title text-outline reveal-text">
           {data.sectionTitle}
         </h2>
+        <div className="projects-section-intro reveal-text">
+          <span className="projects-section-kicker">{data.sectionKicker}</span>
+          <p className="projects-section-lead">{data.sectionIntro}</p>
+        </div>
       </div>
 
       <div
