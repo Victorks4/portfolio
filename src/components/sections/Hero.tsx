@@ -11,6 +11,10 @@ function splitChars(text: string) {
   ))
 }
 
+function isExternalHref(href: string): boolean {
+  return href.startsWith('http://') || href.startsWith('https://')
+}
+
 type HeroProps = {
   data: Portfolio['hero']
 }
@@ -91,14 +95,34 @@ export function Hero({ data }: HeroProps) {
                 href={data.secondaryCta.href}
                 className="btn btn-outline hover-target magnetic-btn"
                 data-strength="30"
+                {...(isExternalHref(data.secondaryCta.href)
+                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                  : {})}
                 onClick={(e) => {
-                  e.preventDefault()
-                  scrollToHash(data.secondaryCta.href)
+                  if (!isExternalHref(data.secondaryCta.href)) {
+                    e.preventDefault()
+                    scrollToHash(data.secondaryCta.href)
+                  }
                 }}
               >
                 {data.secondaryCta.label}
               </a>
             </div>
+            {data.contactCta ? (
+              <div className="magnetic-wrap">
+                <a
+                  href={data.contactCta.href}
+                  className="btn btn-ghost hover-target magnetic-btn"
+                  data-strength="30"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    scrollToHash(data.contactCta!.href)
+                  }}
+                >
+                  {data.contactCta.label}
+                </a>
+              </div>
+            ) : null}
             {data.cvHref ? (
               <div className="magnetic-wrap">
                 <a

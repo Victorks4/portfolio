@@ -9,12 +9,14 @@ import { Timeline } from '../components/sections/Timeline'
 import { ContactSection } from '../components/sections/ContactSection'
 import { usePortfolioAnimations } from '../hooks/usePortfolioAnimations'
 import { useShellContext } from '../hooks/useShellContext'
+import { useLenisContext } from '../hooks/useLenisContext'
 import { absoluteUrl } from '../utils/siteUrl'
 
 export function HomePage() {
   const { introReady, morphApiRef } = useShellContext()
+  const { perfConfig } = useLenisContext()
 
-  usePortfolioAnimations({ introReady, morphApiRef })
+  usePortfolioAnimations({ introReady, morphApiRef, perfConfig })
 
   const structuredData = useMemo(
     () =>
@@ -30,7 +32,8 @@ export function HomePage() {
             address: portfolio.hero.location
               ? {
                   '@type': 'PostalAddress',
-                  addressLocality: portfolio.hero.location,
+                  addressLocality: 'Feira de Santana',
+                  addressCountry: 'BR',
                 }
               : undefined,
             sameAs: portfolio.contact.socials.map((s) => s.href),

@@ -1,6 +1,8 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useEffect } from 'react'
+import { useLenisContext } from './useLenisContext'
+import { scheduleScrollTriggerRefresh } from '../utils/scrollTriggerRefresh'
 import { registerTextOutlineReveals } from './useTextOutlineReveal'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -48,6 +50,7 @@ function revealGroup(
  * gatilhos quando a pessoa navega direto de um projeto para o próximo.
  */
 export function useProjectDetailAnimations(slug: string | undefined) {
+  const { perfConfig } = useLenisContext()
   useEffect(() => {
     if (!slug) return
 
@@ -94,7 +97,7 @@ export function useProjectDetailAnimations(slug: string | undefined) {
         gsap.set('.project-detail-hero > *', { opacity: 1, clearProps: 'transform' })
       }
 
-      cleanupOutline = registerTextOutlineReveals()
+      cleanupOutline = registerTextOutlineReveals(document, perfConfig)
 
       gsap.utils.toArray<HTMLElement>('.project-detail-split').forEach((split) => {
         revealGroup(split, ':scope > .reveal-text', { stagger: 0.14, y: 40 })
@@ -184,12 +187,11 @@ export function useProjectDetailAnimations(slug: string | undefined) {
       })
     })
 
-    const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 350)
+    scheduleScrollTriggerRefresh(350)
 
     return () => {
-      window.clearTimeout(refreshId)
       cleanupOutline?.()
       ctx.revert()
     }
-  }, [slug])
+  }, [slug, perfConfig])
 }

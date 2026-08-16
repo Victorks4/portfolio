@@ -5,16 +5,19 @@ type PreloaderProps = {
   brand: string
   logs: string[]
   onDone: () => void
+  onRevealStart?: () => void
 }
 
 const MAX_VISIBLE_LOGS = 4
+const REVEAL_PROGRESS = 85
 
-export function Preloader({ brand, logs, onDone }: PreloaderProps) {
+export function Preloader({ brand, logs, onDone, onRevealStart }: PreloaderProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
   const [progress, setProgress] = useState(0)
   const [status, setStatus] = useState('Iniciando Kernel...')
   const finishedRef = useRef(false)
+  const revealStartedRef = useRef(false)
 
   useEffect(() => {
     const terminal = terminalRef.current
@@ -34,12 +37,19 @@ export function Preloader({ brand, logs, onDone }: PreloaderProps) {
       logIndex++
     }, 400)
 
+    const startReveal = () => {
+      if (revealStartedRef.current) return
+      revealStartedRef.current = true
+      onRevealStart?.()
+    }
+
     let prog = 0
     const progInterval = window.setInterval(() => {
       if (finishedRef.current) return
       prog += Math.floor(Math.random() * 8) + 1
       if (prog > 30) setStatus('Gerando Geometria Procedural...')
       if (prog > 70) setStatus('Sincronizando GSAP Timelines...')
+      if (prog >= REVEAL_PROGRESS) startReveal()
       if (prog >= 100) {
         prog = 100
         setProgress(100)
@@ -48,6 +58,7 @@ export function Preloader({ brand, logs, onDone }: PreloaderProps) {
         window.clearInterval(logInterval)
         finishedRef.current = true
         window.setTimeout(() => {
+          startReveal()
           const el = rootRef.current
           if (el) {
             gsap.to(el, {
@@ -69,7 +80,7 @@ export function Preloader({ brand, logs, onDone }: PreloaderProps) {
       window.clearInterval(logInterval)
       window.clearInterval(progInterval)
     }
-  }, [logs, onDone])
+  }, [logs, onDone, onRevealStart])
 
   return (
     <div id="preloader" ref={rootRef}>

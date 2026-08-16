@@ -12,8 +12,39 @@ type WebGLBackgroundProps = {
   lenis: Lenis | null
   perfConfig: PerformanceConfig
   onReady?: (api: WebGLApi) => void
-  /** Hero da rota atual — modo completo enquanto visível. */
   heroAnchor?: string
+}
+
+const AMBIENT_FRAME_MS = 66 // ~15fps fora do hero
+
+function deferAfterFirstPaint(callback: () => void): () => void {
+  let cancelled = false
+  let idleId: number | undefined
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+
+  const run = () => {
+    if (cancelled) return
+    callback()
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (cancelled) return
+      if ('requestIdleCallback' in window) {
+        idleId = window.requestIdleCallback(run, { timeout: 500 })
+      } else {
+        timeoutId = setTimeout(run, 0)
+      }
+    })
+  })
+
+  return () => {
+    cancelled = true
+    if (idleId !== undefined && 'cancelIdleCallback' in window) {
+      window.cancelIdleCallback(idleId)
+    }
+    if (timeoutId !== undefined) clearTimeout(timeoutId)
+  }
 }
 
 export function WebGLBackground({
@@ -24,99 +55,109 @@ export function WebGLBackground({
 }: WebGLBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const coreRef = useRef<WebGLCore | null>(null)
-  const pageActiveRef = useRef(true)
-  const heroActiveRef = useRef(true)
-  const visibleRef = useRef(true)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const core = new WebGLCore(canvas, {
-      enableBloom: perfConfig.enableBloom,
-      enablePostShader: perfConfig.enablePostShader,
-      pixelRatio: perfConfig.pixelRatio,
-    })
-    coreRef.current = core
-    const particles = new ParticleSystem(core, perfConfig.particleCount)
-    const perfLow = perfConfig.tier === 'low'
+    let disposed = false
+    let teardown: (() => void) | undefined
 
-    const api: WebGLApi = {
-      setMorphTarget: (index: number) => particles.setMorphTarget(index),
-    }
-    onReady?.(api)
+    const cancelDefer = deferAfterFirstPaint(() => {
+      if (disposed) return
 
-    let raf = 0
-    let running = true
-    visibleRef.current = !document.hidden
+      const core = new WebGLCore(canvas, {
+        enableBloom: perfConfig.enableBloom,
+        enablePostShader: perfConfig.enablePostShader,
+        pixelRatio: perfConfig.pixelRatio,
+      })
+      coreRef.current = core
 
-    const loop = () => {
-      if (running && visibleRef.current && pageActiveRef.current) {
+      const particles = new ParticleSystem(core, perfConfig.particleCount)
+      const perfLow = perfConfig.tier === 'low'
+
+      onReady?.({
+        setMorphTarget: (index: number) => particles.setMorphTarget(index),
+      })
+
+      let running = true
+      let raf = 0
+      let heroActive = true
+      let tabVisible = !document.hidden
+      let lastFrameAt = 0
+
+      const shouldRender = () => running && tabVisible
+
+      const loop = (now: number) => {
+        raf = 0
+        if (!shouldRender()) return
+
+        const ambient = !heroActive
+        if (ambient && now - lastFrameAt < AMBIENT_FRAME_MS) {
+          raf = requestAnimationFrame(loop)
+          return
+        }
+        lastFrameAt = now
+
         const t = core.clock.getElapsedTime()
-        const ambient = !heroActiveRef.current
         particles.update(t, core.mouse, { ambient, perfLow })
         core.render()
+        raf = requestAnimationFrame(loop)
       }
-      raf = requestAnimationFrame(loop)
-    }
-    raf = requestAnimationFrame(loop)
 
-    const onVisibility = () => {
-      visibleRef.current = !document.hidden
-    }
-    document.addEventListener('visibilitychange', onVisibility)
+      const startLoop = () => {
+        if (raf === 0 && shouldRender()) {
+          raf = requestAnimationFrame(loop)
+        }
+      }
 
-    return () => {
-      running = false
-      cancelAnimationFrame(raf)
-      document.removeEventListener('visibilitychange', onVisibility)
-      particles.dispose()
-      core.dispose()
-      coreRef.current = null
-    }
-  }, [onReady, perfConfig])
+      const stopLoop = () => {
+        if (raf !== 0) {
+          cancelAnimationFrame(raf)
+          raf = 0
+        }
+      }
 
-  useEffect(() => {
-    const page = document.querySelector('#conteudo')
-    if (!page) {
-      pageActiveRef.current = true
-      return
-    }
+      const onVisibility = () => {
+        tabVisible = !document.hidden
+        if (tabVisible) startLoop()
+        else stopLoop()
+      }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        pageActiveRef.current = entry.isIntersecting
-      },
-      { root: null, rootMargin: '0px', threshold: 0 },
-    )
-    observer.observe(page)
+      document.addEventListener('visibilitychange', onVisibility)
+      startLoop()
 
-    return () => {
-      observer.disconnect()
-      pageActiveRef.current = true
-    }
-  }, [])
+      const hero = document.querySelector(heroAnchor)
+      let heroObserver: IntersectionObserver | null = null
 
-  useEffect(() => {
-    const hero = document.querySelector(heroAnchor)
-    if (!hero) {
-      heroActiveRef.current = true
-      return
-    }
+      if (hero) {
+        heroObserver = new IntersectionObserver(
+          ([entry]) => {
+            heroActive = entry.isIntersecting
+            startLoop()
+          },
+          { root: null, rootMargin: '0px', threshold: 0 },
+        )
+        heroObserver.observe(hero)
+      }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        heroActiveRef.current = entry.isIntersecting
-      },
-      { root: null, rootMargin: '0px', threshold: 0 },
-    )
-    observer.observe(hero)
+      teardown = () => {
+        running = false
+        stopLoop()
+        document.removeEventListener('visibilitychange', onVisibility)
+        heroObserver?.disconnect()
+        particles.dispose()
+        core.dispose()
+        coreRef.current = null
+      }
+    })
 
     return () => {
-      observer.disconnect()
-      heroActiveRef.current = true
+      disposed = true
+      cancelDefer()
+      teardown?.()
     }
-  }, [heroAnchor])
+  }, [heroAnchor, onReady, perfConfig])
 
   useEffect(() => {
     const core = coreRef.current

@@ -16,26 +16,29 @@ export function CustomCursor({ enabled }: { enabled: boolean }) {
     let mouseY = window.innerHeight / 2
     let ringX = mouseX
     let ringY = mouseY
+    let raf = 0
+    let pending = false
+
+    const paintRing = () => {
+      pending = false
+      ringX = particleMath.lerp(ringX, mouseX, 0.15)
+      ringY = particleMath.lerp(ringY, mouseY, 0.15)
+      ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`
+    }
 
     const onMove = (e: MouseEvent) => {
       mouseX = e.clientX
       mouseY = e.clientY
       dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`
+
+      if (!pending) {
+        pending = true
+        raf = requestAnimationFrame(paintRing)
+      }
     }
 
-    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mousemove', onMove, { passive: true })
 
-    let raf = 0
-    const loop = () => {
-      ringX = particleMath.lerp(ringX, mouseX, 0.15)
-      ringY = particleMath.lerp(ringY, mouseY, 0.15)
-      ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`
-      raf = requestAnimationFrame(loop)
-    }
-    raf = requestAnimationFrame(loop)
-
-    // Delegação em vez de listener por elemento: cobre o conteúdo que entra
-    // depois, como a página de projeto carregada ao trocar de rota.
     const INTERACTIVE = 'a, button, .hover-target'
     const onOver = (e: MouseEvent) => {
       if ((e.target as Element | null)?.closest?.(INTERACTIVE)) {

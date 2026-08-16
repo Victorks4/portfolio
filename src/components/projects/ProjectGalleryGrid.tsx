@@ -147,12 +147,6 @@ export function ProjectGalleryGrid({ project }: ProjectGalleryGridProps) {
   const goNext = useCallback(() => goTo(index + 1, 1), [goTo, index])
 
   useEffect(() => {
-    setIndex(0)
-    isAnimating.current = false
-    imageCacheRef.current.clear()
-  }, [project.slug])
-
-  useEffect(() => {
     gallery.forEach((item) => {
       void ensureImageLoaded(item.src, imageCacheRef.current)
     })

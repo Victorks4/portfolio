@@ -19,7 +19,6 @@ export function Navbar({ logoLabel, items, contactCta }: NavbarProps) {
   const [activeHash, setActiveHash] = useState('')
 
   const isHome = pathname === '/'
-  // Fora da home não há seção ativa; derivar evita guardar estado obsoleto.
   const activeSection = isHome ? activeHash : ''
 
   useEffect(() => {
@@ -32,7 +31,6 @@ export function Navbar({ logoLabel, items, contactCta }: NavbarProps) {
           trigger: item.href,
           start: 'top center',
           end: 'bottom center',
-          // onToggle também dispara no refresh, marcando a seção correta ao carregar.
           onToggle: (self) => {
             if (self.isActive) setActiveHash(item.href)
           },

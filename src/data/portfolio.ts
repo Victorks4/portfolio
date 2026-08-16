@@ -5,14 +5,14 @@ export const portfolio: Portfolio = {
   meta: {
     title: 'Victor Santos | Desenvolvedor Full Stack & Engenheiro de Software',
     description:
-      'Portfólio de Victor Santos (Dev Santos). Apaixonado por criar soluções que fazem a diferença, focado em IA, Chatbots, Automação e experiências WebGL.',
+      'Portfólio de Victor Santos (Dev Santos). Desenvolvedor Full Stack com projetos reais em IA, automação e sistemas web para clientes e o SENAI.',
     author: 'Victor Santos',
     themeColor: '#030305',
     robots: 'index, follow',
     ogType: 'website',
-    ogTitle: 'Victor Santos | Desenvolvedor Full Stack & IA',
+    ogTitle: 'Victor Santos | Desenvolvedor Full Stack & Engenheiro de Software',
     ogDescription:
-      'Acredita em código limpo, design intuitivo e tecnologia de ponta. Especialista em assistentes virtuais e sistemas de automação.',
+      'Projetos reais em produção: assistentes com IA, sistemas internos no SENAI e interfaces web com foco em impacto.',
     ogImage: '/og-image.jpg',
     siteUrl: 'https://portfolio-devsant.web.app',
   },
@@ -32,17 +32,21 @@ export const portfolio: Portfolio = {
   hero: {
     greeting: 'System.out.println("Hello World");',
     nameLines: ['Victor', 'Santos'],
-    subtitle: 'Desenvolvedor Full Stack & Estudante de Engenharia de Software.',
+    subtitle:
+      'Desenvolvedor Full Stack & Eng. Software com foco em IA, automação e produtos web em produção.',
     description:
-      'Construindo o futuro através de código limpo, inteligência artificial e interfaces 3D imersivas. Foco no desenvolvimento de assistentes virtuais e sistemas de automação.',
+      'Construo assistentes virtuais, sistemas internos e interfaces imersivas para problemas reais, do WhatsApp do cliente ao controle de chaves no SENAI.',
     portraitSrc: '/minhafoto.png',
     portraitAlt: 'Victor Santos',
     portraitFallbackSrc:
       'https://placehold.co/450x560/030305/00ffcc?text=V.Santos',
     primaryCta: { label: 'Ver Projetos', href: '#projects' },
-    secondaryCta: { label: 'Iniciar Conexão', href: '#contact' },
+    secondaryCta: {
+      label: 'LinkedIn',
+      href: 'https://www.linkedin.com/in/victor-santos-barbosa-985390274',
+    },
+    contactCta: { label: 'Iniciar Conexão', href: '#contact' },
     availability: 'Disponível para novos projetos',
-    // TODO: confirmar cidade
     location: 'Feira de Santana, Brasil · Remoto ou Híbrido',
     scrollLabel: 'Rolar',
   },
@@ -78,7 +82,7 @@ export const portfolio: Portfolio = {
       },
     ],
     stats: [
-      { value: 9, label: 'Sistemas em Produção' },
+      { value: 3, label: 'Projetos em Produção' },
       { value: 18, label: 'Tecnologias em Uso' },
       { value: 3, label: 'Anos de Imersão' },
     ],
@@ -221,7 +225,7 @@ export const portfolio: Portfolio = {
     sectionTitle: 'Projetos Destaque',
     sectionKicker: 'Projetos reais',
     sectionIntro:
-      'Sistemas desenvolvidos para solucionar problemas e otimizar processos internos — necessidades reais de clientes e instituições, não apenas exercícios de portfólio.',
+      'Sistemas desenvolvidos para solucionar problemas e otimizar processos internos: necessidades reais de clientes e instituições, não apenas exercícios de portfólio.',
     items: [
       {
         slug: 'bellabot',
@@ -236,9 +240,9 @@ export const portfolio: Portfolio = {
         description:
           'Assistente virtual em produção no WhatsApp do Bella Beauty, automatizando atendimento fora do horário com IA contextual, memória de conversa e escalonamento para humano.',
         impactMetrics: [
-          { value: '24/7', label: 'atendimento no WhatsApp' },
-          { value: 'Em prod.', label: 'salão Bella Beauty' },
-          { value: 'IA', label: 'contexto por conversa' },
+          { value: '24/7', label: 'WhatsApp fora do horário do salão' },
+          { value: '100%', label: 'conversas com histórico por contato' },
+          { value: 'IA', label: 'linguagem natural, sem menu numerado' },
         ],
         tech: ['WhatsApp API', 'Gemini API', 'Python', 'SQLite'],
         color: '#b83a5c',
@@ -261,9 +265,9 @@ export const portfolio: Portfolio = {
         description:
           'Sistema de controle de chaves para uso interno no SENAI, substituindo folha de papel por retirada digital com histórico auditável, status em tempo real e menos fila na portaria.',
         impactMetrics: [
-          { value: 'Em prod.', label: 'uso interno no SENAI' },
-          { value: '2', label: 'perfis operacionais' },
-          { value: '100%', label: 'movimentações rastreadas' },
+          { value: '0', label: 'folhas de papel na portaria' },
+          { value: '100%', label: 'movimentações auditáveis' },
+          { value: '2', label: 'perfis operacionais (admin e professor)' },
         ],
         tech: ['Node.js', 'Firebase', 'React', 'Tailwind'],
         color: '#ffca28',
@@ -281,13 +285,13 @@ export const portfolio: Portfolio = {
           badge: 'Projeto real · SENAI',
           organization: 'SENAI',
         },
-        highlight: 'Em desenvolvimento',
+        highlight: 'Em produção',
         description:
           'Sistema de controle de frequência para uso interno no SENAI, automatizando registros de ponto, cálculo de saldo de horas, aprovação de ausências e geração de relatórios.',
         impactMetrics: [
-          { value: '4', label: 'perfis operacionais' },
-          { value: 'Auto', label: 'cálculo de saldo' },
-          { value: '0', label: 'planilhas no fechamento' },
+          { value: '4', label: 'perfis com permissão separada' },
+          { value: '0', label: 'planilhas no fechamento mensal' },
+          { value: '100%', label: 'correções de ponto auditáveis' },
         ],
         tech: ['Next.js', 'Tailwind CSS', 'NestJS', 'PostgreSQL'],
         color: '#4d9fff',
@@ -310,7 +314,7 @@ export const portfolio: Portfolio = {
         impactMetrics: [
           { value: '3D', label: 'avatar personalizado' },
           { value: '360°', label: 'visualização do caimento' },
-          { value: 'Meta', label: 'menos devoluções por tamanho' },
+          { value: 'WIP', label: 'provador virtual em construção' },
         ],
         tech: ['React', 'Three.js', 'NestJS', 'PostgreSQL'],
         color: '#ff2d78',

@@ -3,6 +3,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import type { MutableRefObject } from 'react'
 import { useEffect, useRef } from 'react'
 import type { WebGLApi } from '../effects/webgl/WebGLBackground'
+import type { PerformanceConfig } from '../utils/performanceTier'
+import { scheduleScrollTriggerRefreshAfterPaint } from '../utils/scrollTriggerRefresh'
 import { registerTextOutlineReveals } from './useTextOutlineReveal'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -10,9 +12,14 @@ gsap.registerPlugin(ScrollTrigger)
 type Params = {
   introReady: boolean
   morphApiRef: MutableRefObject<WebGLApi | null>
+  perfConfig: PerformanceConfig
 }
 
-export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
+export function usePortfolioAnimations({
+  introReady,
+  morphApiRef,
+  perfConfig,
+}: Params) {
   const magneticCleanups = useRef<(() => void)[]>([])
 
   useEffect(() => {
@@ -21,22 +28,36 @@ export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
     let cleanupOutline: (() => void) | undefined
 
     const ctx = gsap.context(() => {
+      const bootRevealed = document.body.classList.contains('boot-revealed')
       const tl = gsap.timeline()
-      tl.from('header', { yPercent: -100, duration: 1, ease: 'power3.out' })
-        .to(
+
+      if (perfConfig.tier === 'high' && !bootRevealed) {
+        tl.from('header', { yPercent: -100, duration: 1, ease: 'power3.out' })
+      } else {
+        tl.from('header', {
+          opacity: bootRevealed ? 0.85 : 0,
+          y: bootRevealed ? -8 : -16,
+          duration: 0.55,
+          ease: 'power3.out',
+        })
+      }
+
+      tl.to(
           '.hero-greeting',
           { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
           '-=0.5',
         )
         .fromTo(
           '.hero-title .split-char',
-          { y: 100, opacity: 0, rotationX: -90 },
+          bootRevealed
+            ? { y: 24, opacity: 1, rotationX: -35 }
+            : { y: 100, opacity: 0, rotationX: -90 },
           {
             y: 0,
             opacity: 1,
             rotationX: 0,
-            duration: 1.2,
-            stagger: 0.02,
+            duration: bootRevealed ? 0.9 : 1.2,
+            stagger: bootRevealed ? 0.012 : 0.02,
             ease: 'back.out(1.7)',
           },
           '-=0.5',
@@ -69,14 +90,19 @@ export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
         )
         .to('.scroll-indicator', { opacity: 1, duration: 1 }, '-=0.2')
 
-      const sections: { id: string; morph: number }[] = [
-        { id: '#hero', morph: 0 },
-        { id: '#about', morph: 1 },
-        { id: '#skills', morph: 2 },
-        { id: '#projects', morph: 3 },
-        { id: '#timeline', morph: 4 },
-        { id: '#contact', morph: 0 },
-      ]
+      const sections: { id: string; morph: number }[] = perfConfig.enableSectionMorph
+        ? [
+            { id: '#hero', morph: 0 },
+            { id: '#about', morph: 1 },
+            { id: '#skills', morph: 2 },
+            { id: '#projects', morph: 3 },
+            { id: '#timeline', morph: 4 },
+            { id: '#contact', morph: 0 },
+          ]
+        : [
+            { id: '#hero', morph: 0 },
+            { id: '#about', morph: 1 },
+          ]
 
       sections.forEach((sec) => {
         ScrollTrigger.create({
@@ -116,7 +142,7 @@ export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
         })
       })
 
-      cleanupOutline = registerTextOutlineReveals()
+      cleanupOutline = registerTextOutlineReveals(document, perfConfig)
 
       gsap.utils.toArray<HTMLElement>('.counter').forEach((counter) => {
         const target = parseInt(counter.dataset.target ?? '0', 10)
@@ -247,7 +273,7 @@ export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
       magneticCleanups.current.forEach((fn) => fn())
       magneticCleanups.current = []
 
-      if (window.innerWidth > 768) {
+      if (perfConfig.tier === 'high' && window.innerWidth > 768) {
         document
           .querySelectorAll<HTMLElement>('.magnetic-btn')
           .forEach((btn) => {
@@ -283,19 +309,16 @@ export function usePortfolioAnimations({ introReady, morphApiRef }: Params) {
       }
     })
 
-    const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 400)
-    const onOrientation = () => {
-      window.setTimeout(() => ScrollTrigger.refresh(), 200)
-    }
+    scheduleScrollTriggerRefreshAfterPaint(120)
+    const onOrientation = () => scheduleScrollTriggerRefreshAfterPaint(80)
     window.addEventListener('orientationchange', onOrientation)
 
     return () => {
-      window.clearTimeout(refreshId)
       window.removeEventListener('orientationchange', onOrientation)
       cleanupOutline?.()
       ctx.revert()
       magneticCleanups.current.forEach((fn) => fn())
       magneticCleanups.current = []
     }
-  }, [introReady, morphApiRef])
+  }, [introReady, morphApiRef, perfConfig])
 }

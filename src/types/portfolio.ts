@@ -166,6 +166,10 @@ export type Portfolio = {
     portraitFallbackSrc: string
     primaryCta: { label: string; href: string }
     secondaryCta: { label: string; href: string }
+    /** CTA terciário para contato na home (ex.: link interno #contact). */
+    contactCta?: { label: string; href: string }
+    /** Link externo para LinkedIn no hero. */
+    linkedinCta?: { label: string; href: string }
     /** Selo de disponibilidade exibido acima do nome. */
     availability?: string
     /** Cidade e modelo de trabalho. */

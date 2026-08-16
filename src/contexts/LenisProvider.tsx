@@ -6,13 +6,18 @@ import {
   detectPerformanceTier,
   getPerformanceConfig,
   type PerformanceConfig,
+  type PerformanceTier,
 } from '../utils/performanceTier'
 
 export function LenisProvider({ children }: { children: React.ReactNode }) {
-  const [lenis, setLenis] = useState<Lenis | null>(null)
-  const [perfConfig] = useState<PerformanceConfig>(() =>
-    getPerformanceConfig(detectPerformanceTier()),
+  const [tier, setTier] = useState<PerformanceTier>(() => detectPerformanceTier())
+
+  const perfConfig = useMemo<PerformanceConfig>(
+    () => getPerformanceConfig(tier),
+    [tier],
   )
+
+  const [lenis, setLenis] = useState<Lenis | null>(null)
 
   useEffect(() => {
     const removePerfClass = applyPerformanceBodyClass(perfConfig.tier)
@@ -53,9 +58,18 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
     [lenis, perfConfig.lenisDuration],
   )
 
+  const applyTier = useCallback((next: PerformanceTier) => {
+    setTier(next)
+  }, [])
+
   const value = useMemo(
-    () => ({ lenis, scrollToHash, perfConfig }),
-    [lenis, scrollToHash, perfConfig],
+    () => ({
+      lenis,
+      scrollToHash,
+      perfConfig,
+      applyTier,
+    }),
+    [lenis, scrollToHash, perfConfig, applyTier],
   )
 
   return (

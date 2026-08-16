@@ -119,7 +119,7 @@ export function ProjectDetailPage() {
 
         <section className="container project-detail-section">
           <h2 className="project-detail-heading reveal-text">Interface</h2>
-          <ProjectGalleryGrid project={project} />
+          <ProjectGalleryGrid key={project.slug} project={project} />
         </section>
 
         <section className="container project-detail-section">

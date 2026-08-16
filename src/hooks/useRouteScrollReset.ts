@@ -1,10 +1,11 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import type Lenis from 'lenis'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLenisContext } from './useLenisContext'
 import { consumeScrollTarget } from '../utils/scrollTarget'
+import { scheduleScrollTriggerRefresh } from '../utils/scrollTriggerRefresh'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -98,11 +99,10 @@ function resetProjectPage(lenis: Lenis | null): () => void {
     immediate: true,
   })
 
-  const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 200)
+  scheduleScrollTriggerRefresh(200)
 
   return () => {
     heroCleanup()
-    window.clearTimeout(refreshId)
   }
 }
 
@@ -113,7 +113,6 @@ function resetProjectPage(lenis: Lenis | null): () => void {
 export function useRouteScrollReset() {
   const { pathname, hash } = useLocation()
   const { lenis } = useLenisContext()
-  const navigationId = useRef(0)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -123,7 +122,6 @@ export function useRouteScrollReset() {
   }, [])
 
   useEffect(() => {
-    const currentNav = ++navigationId.current
     let cleanup: (() => void) | undefined
 
     const isProjectRoute = pathname.startsWith('/projetos/')
@@ -136,20 +134,15 @@ export function useRouteScrollReset() {
       const cancelScroll = scrollWhenReady(homeScrollTarget, lenis, {
         immediate: true,
       })
-      const refreshId = window.setTimeout(() => {
-        if (navigationId.current === currentNav) {
-          ScrollTrigger.refresh()
-        }
-      }, 250)
+      scheduleScrollTriggerRefresh(250)
 
       cleanup = () => {
         cancelScroll()
-        window.clearTimeout(refreshId)
       }
     } else {
       resetToTop(lenis)
-      const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 160)
-      cleanup = () => window.clearTimeout(refreshId)
+      scheduleScrollTriggerRefresh(160)
+      cleanup = undefined
     }
 
     return () => {

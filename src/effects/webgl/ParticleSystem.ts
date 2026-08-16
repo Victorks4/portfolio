@@ -115,22 +115,20 @@ export class ParticleSystem {
             float ease = smoothstep(0.0, 1.0, uMorphProgress);
             vec3 pos = mix(p1, p2, ease);
 
-            vec3 curl = curlNoise(pos * 0.15 + uTime * 0.1);
-            float curlAmp = mix(1.2, 0.36, uAmbient);
-            pos += curl * curlAmp;
-
             if (uAmbient < 0.5) {
+                vec3 curl = curlNoise(pos * 0.15 + uTime * 0.1);
+                pos += curl * 1.2;
+
                 float dist = distance(pos.xy, uMouse.xy * 25.0);
                 if(dist < 10.0) {
                     vec3 dir = normalize(vec3(pos.xy - uMouse.xy * 25.0, pos.z));
                     float force = (10.0 - dist) / 10.0;
                     pos += dir * force * 4.0;
                 }
-            }
 
-            float spike = sin(uMorphProgress * 3.14159);
-            float spikeAmp = mix(5.0, 1.2, uAmbient);
-            pos += curlNoise(pos + aRandom * 10.0) * spike * spikeAmp;
+                float spike = sin(uMorphProgress * 3.14159);
+                pos += curlNoise(pos + aRandom * 10.0) * spike * 5.0;
+            }
 
             vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
             gl_Position = projectionMatrix * mvPosition;

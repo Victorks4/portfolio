@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import type { Portfolio } from '../../types/portfolio'
 import { ProjectCard } from './ProjectCard'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { scheduleScrollTriggerRefresh } from '../../utils/scrollTriggerRefresh'
 import { useIsTouch } from '../../hooks/useMediaQuery'
 
 const AUTOPLAY_MS = 5000
@@ -49,8 +49,7 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
   }, [paused, tookControl, count])
 
   useEffect(() => {
-    const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 100)
-    return () => window.clearTimeout(refreshId)
+    scheduleScrollTriggerRefresh(100)
   }, [])
 
   // No mobile a faixa de nomes rola só na horizontal. scrollIntoView puxava

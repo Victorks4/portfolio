@@ -20,9 +20,9 @@
     --color-glow-purple: rgba(112, 0, 255, 0.4);
     
     /* Typography Scale */
-    --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-display: 'Space Grotesk', sans-serif;
-    --font-mono: 'Space Mono', monospace;
+    --font-ui: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'Space Mono', ui-monospace, monospace;
     
     /* Fluid Typography */
     --text-xs: clamp(0.75rem, 0.8vw, 0.875rem);
@@ -190,6 +190,17 @@ h1, h2, h3, h4, h5, h6 {
     pointer-events: none; 
     overflow: hidden;
     background-color: var(--color-bg-base);
+}
+
+.webgl-fallback {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-canvas);
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(112, 0, 255, 0.18), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 80% 100%, rgba(0, 255, 204, 0.1), transparent 50%),
+        var(--color-bg-base);
 }
 
 #webgl-canvas {
@@ -933,7 +944,7 @@ header.hidden {
 
 .scroll-indicator {
     position: absolute;
-    bottom: var(--space-xl);
+    bottom: calc(var(--space-xl) + 3.5rem);
     left: var(--container-padding);
     display: flex;
     align-items: center;
@@ -1418,9 +1429,6 @@ header.hidden {
     overflow: hidden;
     background: #050505;
     border-right: 1px solid var(--color-border-subtle);
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .project-visual-inner {
@@ -1458,10 +1466,13 @@ header.hidden {
 }
 
 .project-shape {
-    width: 180px;
-    height: 180px;
-    position: relative;
+    width: 140px;
+    height: 140px;
+    position: absolute;
+    top: var(--space-lg);
+    left: var(--space-lg);
     z-index: 2;
+    transform-origin: top left;
     filter: drop-shadow(0 0 30px var(--project-color, var(--color-accent-cyan)));
     transition: transform 0.6s var(--ease-elastic);
 }
@@ -1478,7 +1489,7 @@ header.hidden {
 }
 
 .project-card.is-active .project-shape {
-    transform: scale(1.15) rotate(15deg);
+    transform: scale(1.08) rotate(12deg);
 }
 
 .shape-bellabot {
@@ -2129,6 +2140,12 @@ header.hidden {
         border-right: none;
         border-bottom: 1px solid var(--color-border-subtle);
     }
+    .project-shape {
+        width: 110px;
+        height: 110px;
+        top: var(--space-md);
+        left: var(--space-md);
+    }
     .project-info { padding: var(--space-md) var(--space-lg); }
 
     .timeline-item { justify-content: flex-start; padding-right: 0; padding-left: 60px; }
@@ -2356,6 +2373,78 @@ body.perf-low .crt-overlay {
 
 body.perf-low .vignette-overlay {
     opacity: 0.5;
+}
+
+body.perf-medium .glass-panel,
+body.perf-medium .project-card,
+body.perf-medium .projects-nav,
+body.perf-medium header,
+body.perf-medium .skill-card,
+body.perf-medium .about-structure,
+body.perf-medium .timeline-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.perf-medium .crt-overlay {
+    opacity: 0.3;
+}
+
+body.perf-medium .vignette-overlay {
+    opacity: 0.45;
+}
+
+/* Hero visível imediatamente após reveal — GSAP só refina o motion */
+body.boot-revealed .hero-greeting,
+body.boot-revealed .hero-subtitle,
+body.boot-revealed .hero-desc,
+body.boot-revealed .hero-actions,
+body.boot-revealed .hero-title .split-char {
+    opacity: 1;
+    transform: none;
+}
+
+body.boot-revealed .hero-image-container {
+    opacity: 1;
+    transform: scale(1) rotateY(0);
+}
+
+body.boot-revealed #header {
+    opacity: 1;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-greeting,
+    .hero-subtitle,
+    .hero-desc,
+    .hero-actions,
+    .hero-title .split-char,
+    .hero-image-container,
+    .scroll-indicator {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    #header {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+#fps-meter {
+    position: fixed;
+    top: calc(var(--nav-height) + 0.5rem);
+    right: 0.75rem;
+    z-index: calc(var(--z-loader) + 2);
+    padding: 0.35rem 0.65rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-border-subtle);
+    background: rgba(8, 8, 12, 0.85);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-accent-cyan);
+    pointer-events: none;
 }
 
 @media (max-width: 768px) {
@@ -2958,8 +3047,8 @@ body.is-touch .skill-name {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-end;
     gap: var(--space-sm);
     min-height: 320px;
     padding: var(--space-lg);
@@ -2967,12 +3056,14 @@ body.is-touch .skill-name {
     border-radius: 24px;
     overflow: hidden;
     background:
-        radial-gradient(circle at 50% 40%, rgba(var(--project-color-rgb, 0, 255, 204), 0.12), transparent 65%),
+        radial-gradient(circle at 18% 22%, rgba(var(--project-color-rgb, 0, 255, 204), 0.12), transparent 55%),
         var(--color-bg-surface);
 }
 
 .project-gallery-placeholder .project-shape {
-    position: relative;
+    position: absolute;
+    top: var(--space-lg);
+    left: var(--space-lg);
     width: 120px;
     height: 120px;
     opacity: 0.55;
@@ -2985,7 +3076,8 @@ body.is-touch .skill-name {
     text-transform: uppercase;
     letter-spacing: 0.14em;
     color: var(--color-text-muted);
-    text-align: center;
+    text-align: left;
+    max-width: 28ch;
 }
 
 /* Funcionalidades */

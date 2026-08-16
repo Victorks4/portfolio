@@ -11,7 +11,7 @@ import type { ProjectDetail, ProjectSlug } from '../types/portfolio'
 export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
   bellabot: {
     tagline:
-      'Automatiza o atendimento do Bella Beauty no WhatsApp — 24/7, com contexto e escalonamento para humano.',
+      'Automatiza o atendimento do Bella Beauty no WhatsApp 24/7, com contexto e escalonamento para humano.',
     year: '2025',
     status: 'Em produção',
     context:
@@ -49,7 +49,7 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
       },
       {
         value: '0',
-        label: 'menus numerados — o cliente escreve em linguagem natural',
+        label: 'menus numerados; o cliente escreve em linguagem natural',
       },
       {
         value: '100%',
@@ -97,16 +97,15 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
       { category: 'Dados', items: ['SQLite'] },
       { category: 'Integração', items: ['WhatsApp API'] },
     ],
-    repoUrl: 'https://github.com/Victorks4',
   },
 
   'smart-key': {
     tagline:
-      'Automatiza a retirada de chaves no SENAI — histórico, status em tempo real e fim da fila no papel.',
+      'Automatiza a retirada de chaves no SENAI: histórico, status em tempo real e fim da fila no papel.',
     year: '2025',
     status: 'Em produção',
     context:
-      'Projeto real desenvolvido durante meu estágio no SENAI: a retirada de chaves dependia de uma folha impressa na portaria — fila, caça ao nome, assinatura à mão e ninguém sabia em tempo real quem estava com qual chave. No horário de troca de aula, o gargalo era visível. Propus e desenvolvi o Smart Key para digitalizar esse fluxo. É uma iniciativa de estágio, não um produto oficial da instituição.',
+      'Projeto real desenvolvido durante meu estágio no SENAI: a retirada de chaves dependia de uma folha impressa na portaria, com fila, caça ao nome, assinatura à mão e ninguém sabia em tempo real quem estava com qual chave. No horário de troca de aula, o gargalo era visível. Propus e desenvolvi o Smart Key para digitalizar esse fluxo. É uma iniciativa de estágio, não um produto oficial da instituição.',
     problem:
       'O papel não aguenta o pico: cada retirada dependia de caça ao nome, a fila crescia e ninguém enxergava em tempo real quem estava com qual chave. Assinatura ilegível, linha errada e devolução esquecida viravam problema sem dono claro. Reconstituir o que aconteceu no dia exigia folhear a folha e adivinhar.',
     solution:
@@ -136,7 +135,7 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
     results: [
       {
         value: '0',
-        label: 'folhas de papel na portaria — cada movimentação fica no sistema',
+        label: 'folhas de papel na portaria; cada movimentação fica no sistema',
       },
       {
         value: '100%',
@@ -201,20 +200,19 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
       { category: 'Backend', items: ['Firebase', 'Node.js'] },
       { category: 'Auth', items: ['Firebase Authentication'] },
     ],
-    repoUrl: 'https://github.com/Victorks4',
   },
 
   pontify: {
     tagline:
-      'Automatiza o ponto de estagiários no SENAI — registros, saldo, ausências e relatórios sem planilha.',
+      'Automatiza o ponto de estagiários no SENAI: registros, saldo, ausências e relatórios sem planilha.',
     year: '2026',
-    status: 'Em desenvolvimento',
+    status: 'Em produção',
     context:
-      'Projeto real desenvolvido durante meu estágio no SENAI: o controle de frequência de estagiários dependia de planilhas compartilhadas — cada marcação copiada manualmente, saldo conferido na mão e fechamento mensal consumindo tempo de gestores e RH. Propus e desenvolvi o PontiFy para automatizar registros, cálculo de saldo e geração de relatórios. É uma iniciativa de estágio, não um produto oficial da instituição.',
+      'Projeto real desenvolvido durante meu estágio no SENAI: o controle de frequência de estagiários dependia de planilhas compartilhadas, com cada marcação copiada manualmente, saldo conferido na mão e fechamento mensal consumindo tempo de gestores e RH. Propus e desenvolvi o PontiFy para automatizar registros, cálculo de saldo e geração de relatórios. É uma iniciativa de estágio, não um produto oficial da instituição.',
     problem:
       'A planilha não dá visibilidade em tempo real: o gestor não sabe quem está devendo horas sem abrir o arquivo, o estagiário não consulta o próprio saldo sozinho e qualquer correção vira caça ao erro entre versões. Ausências e compensações dependiam de mensagem ou e-mail, sem trilha única. Fechar o mês era trabalho repetitivo e sujeito a inconsistência.',
     solution:
-      'Desenvolvi um sistema de ponto com quatro perfis — Administrador, Gestor, Colaborador e RH — cada um com o que precisa ver e fazer. O estagiário registra a jornada e acompanha o saldo; o gestor aprova ausências e compensações do time; o RH audita e corrige com rastro; a administração consolida relatórios por período direto do PostgreSQL, sem exportar planilha.',
+      'Desenvolvi um sistema de ponto com quatro perfis (Administrador, Gestor, Colaborador e RH), cada um com o que precisa ver e fazer. O estagiário registra a jornada e acompanha o saldo; o gestor aprova ausências e compensações do time; o RH audita e corrige com rastro; a administração consolida relatórios por período direto do PostgreSQL, sem exportar planilha.',
     features: [
       {
         title: 'Registro e saldo em tempo real',
@@ -244,7 +242,7 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
       },
       {
         value: '0',
-        label: 'planilhas no fechamento mensal — dados centralizados no banco',
+        label: 'planilhas no fechamento mensal; dados centralizados no banco',
       },
       {
         value: '100%',
@@ -316,20 +314,19 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
       { category: 'Backend', items: ['NestJS', 'Node.js'] },
       { category: 'Dados', items: ['PostgreSQL'] },
     ],
-    repoUrl: 'https://github.com/Victorks4',
   },
 
   origyn: {
     tagline:
-      'Automatiza a escolha de tamanho no e-commerce — provador 3D com caimento real antes da compra.',
+      'Automatiza a escolha de tamanho no e-commerce com provador 3D e caimento real antes da compra.',
     year: '2026',
     status: 'Em desenvolvimento',
     context:
-      'Loja de roupas femininas e unissex criada para resolver a maior dor de comprar moda online: não dá para experimentar antes. A tabela de medidas em texto não responde à pergunta real do cliente — como a peça vai ficar no corpo dele.',
+      'Loja de roupas femininas e unissex criada para resolver a maior dor de comprar moda online: não dá para experimentar antes. A tabela de medidas em texto não responde à pergunta real do cliente: como a peça vai ficar no corpo dele.',
     problem:
       'No e-commerce de moda, devolução por caimento é o principal motivo de perda. O cliente escolhe o tamanho no chute a partir de uma tabela genérica, recebe a peça, não serve e devolve. A logística reversa custa caro para a loja e a experiência ruim afasta a recompra.',
     solution:
-      'Estou construindo uma loja completa onde o cliente informa suas medidas e um avatar 3D é gerado com aquele corpo. A peça é vestida nesse avatar, permitindo girar, aproximar e ver o caimento real antes de comprar — trocando a tabela de medidas por uma resposta visual concreta.',
+      'Estou construindo uma loja completa onde o cliente informa suas medidas e um avatar 3D é gerado com aquele corpo. A peça é vestida nesse avatar, permitindo girar, aproximar e ver o caimento real antes de comprar, trocando a tabela de medidas por uma resposta visual concreta.',
     features: [
       {
         title: 'Avatar 3D personalizado',
@@ -366,8 +363,8 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
         label: 'rotação da peça vestida para inspecionar folga e comprimento',
       },
       {
-        value: 'Meta',
-        label: 'reduzir devoluções por caimento errado antes de fechar a compra',
+        value: 'WIP',
+        label: 'provador virtual em construção',
       },
     ],
     architecture: [
@@ -406,6 +403,5 @@ export const projectDetails: Record<ProjectSlug, ProjectDetail> = {
       { category: 'Backend', items: ['Node.js', 'NestJS'] },
       { category: 'Dados', items: ['PostgreSQL'] },
     ],
-    repoUrl: 'https://github.com/Victorks4',
   },
 }

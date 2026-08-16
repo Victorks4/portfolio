@@ -12,9 +12,15 @@ import { portfolio } from '../../data/portfolio'
 import { useLenisContext } from '../../hooks/useLenisContext'
 import { useLenisGsapBridge } from '../../hooks/useLenisGsapBridge'
 import { useRouteScrollReset } from '../../hooks/useRouteScrollReset'
+import { useAdaptivePerformance } from '../../hooks/useAdaptivePerformance'
+import { useFpsMeter } from '../../hooks/useFpsMeter'
 import { useBreakpoint, useIsTouch } from '../../hooks/useMediaQuery'
 import type { ShellContext } from '../../hooks/useShellContext'
 import type { WebGLApi } from '../../effects/webgl/WebGLBackground'
+import {
+  applyBootRevealedBodyClass,
+  startBootPreload,
+} from '../../utils/bootPreload'
 import { Navbar } from './Navbar'
 import { Preloader } from '../effects/Preloader'
 import { CustomCursor } from '../effects/CustomCursor'
@@ -27,7 +33,6 @@ const WebGLBackground = lazy(() =>
 
 const PRELOADER_SESSION_KEY = 'devsantos:preloader-done'
 
-/** O preloader é a abertura da home — não deve gatilhar links diretos de projeto nem repetir na sessão. */
 function shouldRunPreloader(pathname: string): boolean {
   if (typeof window === 'undefined') return false
   if (pathname !== '/') return false
@@ -40,17 +45,20 @@ function shouldRunPreloader(pathname: string): boolean {
 
 export function SiteLayout() {
   const { pathname } = useLocation()
-  const { lenis, perfConfig } = useLenisContext()
+  const { lenis, perfConfig, applyTier } = useLenisContext()
 
   const [runsPreloader] = useState(() => shouldRunPreloader(pathname))
   const [showPreloader, setShowPreloader] = useState(runsPreloader)
   const [introReady, setIntroReady] = useState(!runsPreloader)
-  const [webglOn, setWebglOn] = useState(!runsPreloader)
 
   const morphApiRef = useRef<WebGLApi | null>(null)
 
   const onWebglReady = useCallback((api: WebGLApi) => {
     morphApiRef.current = api
+  }, [])
+
+  const onRevealStart = useCallback(() => {
+    setIntroReady(true)
   }, [])
 
   const onPreloaderDone = useCallback(() => {
@@ -60,9 +68,16 @@ export function SiteLayout() {
       // sessionStorage indisponível (modo privado); seguimos sem persistir.
     }
     setShowPreloader(false)
-    setIntroReady(true)
-    setWebglOn(true)
   }, [])
+
+  useEffect(() => {
+    if (runsPreloader) startBootPreload()
+  }, [runsPreloader])
+
+  useEffect(() => {
+    if (!introReady) return
+    return applyBootRevealedBodyClass(true)
+  }, [introReady])
 
   const breakpoint = useBreakpoint()
   const isTouch = useIsTouch()
@@ -75,8 +90,20 @@ export function SiteLayout() {
       '(prefers-reduced-motion: reduce)',
     ).matches
     const finePointer = window.matchMedia('(pointer: fine)').matches
-    return finePointer && !reduceMotion && !isTouch && !isMobile
-  }, [isMobile, isTouch])
+    return (
+      finePointer &&
+      !reduceMotion &&
+      !isTouch &&
+      !isMobile &&
+      perfConfig.tier !== 'low'
+    )
+  }, [isMobile, isTouch, perfConfig.tier])
+
+  useFpsMeter()
+  useAdaptivePerformance({
+    tier: perfConfig.tier,
+    onTierDowngrade: applyTier,
+  })
 
   useLenisGsapBridge(lenis)
   useRouteScrollReset()
@@ -100,6 +127,8 @@ export function SiteLayout() {
   }, [isMobile, isTablet, isTouch])
 
   const isHome = pathname === '/'
+  const showWebGL = perfConfig.enableWebGL
+  const showCrt = perfConfig.enableCrt
 
   const outletContext: ShellContext = useMemo(
     () => ({ introReady, morphApiRef }),
@@ -112,6 +141,7 @@ export function SiteLayout() {
         <Preloader
           brand={portfolio.brand.loaderBrand}
           logs={portfolio.preloaderLogs}
+          onRevealStart={onRevealStart}
           onDone={onPreloaderDone}
         />
       )}
@@ -122,8 +152,10 @@ export function SiteLayout() {
 
       <CustomCursor enabled={customCursor} />
 
-      {webglOn && (
-        <Suspense fallback={null}>
+      {!showWebGL ? <div className="webgl-fallback" aria-hidden /> : null}
+
+      {showWebGL ? (
+        <Suspense fallback={<div className="webgl-fallback" aria-hidden />}>
           <WebGLBackground
             lenis={lenis}
             perfConfig={perfConfig}
@@ -131,10 +163,14 @@ export function SiteLayout() {
             heroAnchor={isHome ? '#hero' : '#project-hero'}
           />
         </Suspense>
-      )}
+      ) : null}
 
-      <div className="crt-overlay" aria-hidden />
-      <div className="vignette-overlay" aria-hidden />
+      {showCrt ? (
+        <>
+          <div className="crt-overlay" aria-hidden />
+          <div className="vignette-overlay" aria-hidden />
+        </>
+      ) : null}
 
       <Navbar
         logoLabel={portfolio.brand.navLogo}
