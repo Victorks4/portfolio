@@ -7,7 +7,7 @@ type SkillsProps = {
 export function Skills({ data }: SkillsProps) {
   return (
     <section id="skills" className="container">
-      <div className="section-header reveal-wrap">
+      <div className="section-header reveal-wrap" id="skills-anchor">
         <span className="section-number">{data.sectionNumber}</span>
         <h2 className="section-title reveal-text font-display">
           Tech <span className="text-gradient-purple">Stack</span>

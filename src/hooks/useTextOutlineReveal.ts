@@ -19,7 +19,7 @@ function accentOf(el: HTMLElement): string {
 function applyOutlineProgress(el: HTMLElement, progress: number, rgb: string) {
   const strokeAlpha = 0.08 + progress * 0.92
   const fillAlpha = progress * 0.08
-  const glowAlpha = progress * 0.4
+  const glowAlpha = progress * 0.85
 
   el.style.color = `rgba(${rgb}, ${fillAlpha})`
   el.style.webkitTextStroke = `1px rgba(${rgb}, ${strokeAlpha})`

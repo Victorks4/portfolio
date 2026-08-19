@@ -40,7 +40,7 @@ type AboutProps = {
 export function About({ data }: AboutProps) {
   return (
     <section id="about" className="container">
-      <div className="section-header reveal-wrap">
+      <div className="section-header reveal-wrap" id="about-anchor">
         <span className="section-number">{data.sectionNumber}</span>
         <h2 className="section-title text-outline reveal-text">{data.sectionTitle}</h2>
       </div>

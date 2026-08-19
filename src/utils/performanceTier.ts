@@ -222,7 +222,7 @@ export function getPerformanceConfig(
     lenisDuration: tier === 'high' ? 1.2 : mobile ? 0.9 : 1,
     enableWebGL: true,
     enableCrt: tier !== 'low',
-    enableOutlineScrub: tier === 'high',
+    enableOutlineScrub: tier !== 'low',
     enableSectionMorph: tier === 'high',
   }
 }

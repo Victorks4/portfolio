@@ -7,7 +7,7 @@ type TimelineProps = {
 export function Timeline({ data }: TimelineProps) {
   return (
     <section id="timeline" className="container">
-      <div className="section-header reveal-wrap items-center text-center self-center w-full">
+      <div className="section-header reveal-wrap items-center text-center self-center w-full" id="timeline-anchor">
         <span className="section-number">{data.sectionNumber}</span>
         <h2 className="section-title reveal-text font-display">
           Minha <span className="text-gradient-cyan">Jornada</span>

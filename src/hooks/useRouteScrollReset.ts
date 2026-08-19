@@ -1,27 +1,34 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import type Lenis from 'lenis'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLenisContext } from './useLenisContext'
-import { consumeScrollTarget } from '../utils/scrollTarget'
+import { forceReturnToProjectsCarousel } from '../utils/projectsScrollRestore'
+import {
+  clearPendingReturnToProjects,
+  commitPathnameNavigation,
+  markWasOnProjectPage,
+  shouldIgnoreHashNavigation,
+  shouldReturnToProjects,
+} from '../utils/routeNavigation'
+import {
+  clearProjectsScrollY,
+  clearScrollTarget,
+  peekScrollTarget,
+} from '../utils/scrollTarget'
+import {
+  resolveScrollTarget,
+  scrollToElement,
+  scrollWhenSelectorReady,
+} from '../utils/scrollAnchor'
 import { scheduleScrollTriggerRefresh } from '../utils/scrollTriggerRefresh'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const NAV_OFFSET_FALLBACK = 72
-const SCROLL_RETRY_MS = 1000
-
-function getNavOffset(): number {
-  const value = getComputedStyle(document.documentElement)
-    .getPropertyValue('--nav-height')
-    .trim()
-  const parsed = parseFloat(value)
-  return Number.isFinite(parsed) ? parsed : NAV_OFFSET_FALLBACK
-}
+const PROJECTS_SELECTOR = resolveScrollTarget('#projects')
 
 function scrollToY(
-  lenis: Lenis | null,
+  lenis: ReturnType<typeof useLenisContext>['lenis'],
   y: number,
   immediate = true,
 ): void {
@@ -31,21 +38,6 @@ function scrollToY(
   window.scrollTo({ top: y, left: 0, behavior: 'auto' })
 }
 
-function scrollToElement(
-  lenis: Lenis | null,
-  el: HTMLElement,
-  immediate = true,
-): void {
-  const offset = -getNavOffset()
-  if (lenis) {
-    lenis.scrollTo(el, { immediate, offset })
-  } else {
-    const top =
-      el.getBoundingClientRect().top + window.scrollY + offset
-    window.scrollTo({ top, left: 0, behavior: 'auto' })
-  }
-}
-
 type ScrollWhenReadyOptions = {
   immediate?: boolean
   maxWaitMs?: number
@@ -53,11 +45,11 @@ type ScrollWhenReadyOptions = {
 
 function scrollWhenReady(
   selector: string,
-  lenis: Lenis | null,
+  lenis: ReturnType<typeof useLenisContext>['lenis'],
   options?: ScrollWhenReadyOptions,
 ): () => void {
   const immediate = options?.immediate ?? true
-  const maxWaitMs = options?.maxWaitMs ?? SCROLL_RETRY_MS
+  const maxWaitMs = options?.maxWaitMs ?? 1000
   const started = performance.now()
   let frame = 0
   let cancelled = false
@@ -68,7 +60,7 @@ function scrollWhenReady(
     const el = document.querySelector(selector)
     if (el) {
       ScrollTrigger.refresh()
-      scrollToElement(lenis, el as HTMLElement, immediate)
+      scrollToElement(lenis, el as HTMLElement, { immediate })
       return
     }
 
@@ -85,14 +77,18 @@ function scrollWhenReady(
   }
 }
 
-function resetToTop(lenis: Lenis | null): void {
+function resetToTop(
+  lenis: ReturnType<typeof useLenisContext>['lenis'],
+): void {
   scrollToY(lenis, 0, true)
   window.requestAnimationFrame(() => {
     scrollToY(lenis, 0, true)
   })
 }
 
-function resetProjectPage(lenis: Lenis | null): () => void {
+function resetProjectPage(
+  lenis: ReturnType<typeof useLenisContext>['lenis'],
+): () => void {
   resetToTop(lenis)
 
   const heroCleanup = scrollWhenReady('#project-hero', lenis, {
@@ -106,6 +102,43 @@ function resetProjectPage(lenis: Lenis | null): () => void {
   }
 }
 
+function resolveHomeScrollTarget(hash: string): string | null {
+  if (shouldReturnToProjects()) {
+    return PROJECTS_SELECTOR
+  }
+
+  const storedTarget = peekScrollTarget()
+  if (storedTarget) {
+    return storedTarget
+  }
+
+  if (hash) {
+    return resolveScrollTarget(hash)
+  }
+
+  return null
+}
+
+function scheduleReturnToProjectsClear(): void {
+  window.setTimeout(() => {
+    clearPendingReturnToProjects()
+    clearProjectsScrollY()
+  }, 1500)
+}
+
+function restoreProjectsIfNeeded(
+  lenis: ReturnType<typeof useLenisContext>['lenis'],
+  onDone?: () => void,
+): (() => void) | undefined {
+  if (!shouldReturnToProjects()) return undefined
+
+  return forceReturnToProjectsCarousel(lenis, () => {
+    scheduleReturnToProjectsClear()
+    scheduleScrollTriggerRefresh(120)
+    onDone?.()
+  })
+}
+
 /**
  * Ao trocar de rota, coordena scroll para o topo, seção alvo ou case study.
  * Evita corrida entre Lenis, hash da URL e restauração nativa do browser.
@@ -113,6 +146,9 @@ function resetProjectPage(lenis: Lenis | null): () => void {
 export function useRouteScrollReset() {
   const { pathname, hash } = useLocation()
   const { lenis } = useLenisContext()
+  const handledHashRef = useRef('')
+  const pathnameRef = useRef(pathname)
+  const returnCleanupRef = useRef<(() => void) | null | undefined>(null)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -122,31 +158,100 @@ export function useRouteScrollReset() {
   }, [])
 
   useEffect(() => {
-    let cleanup: (() => void) | undefined
+    const onPopState = () => {
+      if (window.location.pathname !== '/') return
 
+      returnCleanupRef.current?.()
+      returnCleanupRef.current = restoreProjectsIfNeeded(lenis)
+    }
+
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [lenis])
+
+  useEffect(() => {
+    const pathnameChanged = pathnameRef.current !== pathname
+    pathnameRef.current = pathname
+
+    commitPathnameNavigation(pathname)
+
+    let cleanup: (() => void) | undefined
     const isProjectRoute = pathname.startsWith('/projetos/')
-    const homeScrollTarget =
-      pathname === '/' ? consumeScrollTarget() ?? (hash || null) : null
 
     if (isProjectRoute) {
+      markWasOnProjectPage()
       cleanup = resetProjectPage(lenis)
-    } else if (homeScrollTarget) {
-      const cancelScroll = scrollWhenReady(homeScrollTarget, lenis, {
-        immediate: true,
-      })
-      scheduleScrollTriggerRefresh(250)
+      returnCleanupRef.current?.()
+      returnCleanupRef.current = null
+    } else if (pathname === '/') {
+      if (shouldReturnToProjects()) {
+        returnCleanupRef.current?.()
+        returnCleanupRef.current = restoreProjectsIfNeeded(lenis, () => {
+          const hadStoredTarget = Boolean(peekScrollTarget())
+          if (hadStoredTarget) {
+            clearScrollTarget()
+          }
+        })
+        handledHashRef.current = hash
+      } else if (pathnameChanged) {
+        const homeScrollTarget = resolveHomeScrollTarget(hash)
+        handledHashRef.current = hash
 
-      cleanup = () => {
-        cancelScroll()
+        if (homeScrollTarget) {
+          const hadStoredTarget = Boolean(peekScrollTarget())
+
+          const cancelScroll = scrollWhenSelectorReady(homeScrollTarget, lenis, {
+            immediate: true,
+            onSuccess: () => {
+              if (hadStoredTarget) {
+                clearScrollTarget()
+              }
+              scheduleScrollTriggerRefresh(120)
+            },
+          })
+          scheduleScrollTriggerRefresh(250)
+          cleanup = () => cancelScroll()
+        } else {
+          resetToTop(lenis)
+          scheduleScrollTriggerRefresh(160)
+        }
       }
     } else {
       resetToTop(lenis)
       scheduleScrollTriggerRefresh(160)
-      cleanup = undefined
+      returnCleanupRef.current?.()
+      returnCleanupRef.current = null
     }
 
     return () => {
       cleanup?.()
+    }
+    // hash é tratado no efeito separado; incluir aqui re-dispara scroll ao mudar #skills
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pathname only
+  }, [pathname, lenis])
+
+  useEffect(() => {
+    if (pathname !== '/') return
+    if (!hash) return
+    if (hash === handledHashRef.current) return
+    if (shouldIgnoreHashNavigation()) return
+
+    handledHashRef.current = hash
+    const target = peekScrollTarget() ?? resolveScrollTarget(hash)
+    const hadStoredTarget = Boolean(peekScrollTarget())
+
+    const cancelScroll = scrollWhenSelectorReady(target, lenis, {
+      immediate: true,
+      onSuccess: () => {
+        if (hadStoredTarget) {
+          clearScrollTarget()
+        }
+        scheduleScrollTriggerRefresh(120)
+      },
+    })
+
+    return () => {
+      cancelScroll()
     }
   }, [pathname, hash, lenis])
 }

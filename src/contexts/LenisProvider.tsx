@@ -8,6 +8,7 @@ import {
   type PerformanceConfig,
   type PerformanceTier,
 } from '../utils/performanceTier'
+import { scrollToAnchor, scrollWhenAnchorReady } from '../utils/scrollAnchor'
 
 export function LenisProvider({ children }: { children: React.ReactNode }) {
   const [tier, setTier] = useState<PerformanceTier>(() => detectPerformanceTier())
@@ -45,15 +46,16 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
 
   const scrollToHash = useCallback(
     (hash: string) => {
-      if (!lenis) {
-        const el = document.querySelector(hash)
-        el?.scrollIntoView({ behavior: 'smooth' })
-        return
-      }
-      lenis.scrollTo(hash, {
+      const didScroll = scrollToAnchor(hash, lenis, {
+        immediate: false,
         duration: perfConfig.lenisDuration + 0.3,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       })
+      if (!didScroll) {
+        scrollWhenAnchorReady(hash, lenis, {
+          immediate: false,
+          maxWaitMs: 2000,
+        })
+      }
     },
     [lenis, perfConfig.lenisDuration],
   )

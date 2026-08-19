@@ -1,7 +1,11 @@
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import type { Project } from '../../types/portfolio'
-import { markScrollTarget } from '../../utils/scrollTarget'
+import { useLenisContext } from '../../hooks/useLenisContext'
+import {
+  markScrollTarget,
+  saveProjectsScrollPosition,
+} from '../../utils/scrollTarget'
 
 type ProjectCardProps = {
   project: Project
@@ -16,7 +20,12 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const num = String(index + 1).padStart(2, '0')
   const href = `/projetos/${project.slug}`
-  const markReturnToProjects = () => markScrollTarget('#projects')
+  const { lenis } = useLenisContext()
+
+  const markReturnToProjects = () => {
+    saveProjectsScrollPosition(lenis?.scroll)
+    markScrollTarget('#projects')
+  }
 
   return (
     <article

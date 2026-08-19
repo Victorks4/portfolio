@@ -32,75 +32,81 @@ type ContactSectionProps = {
 export function ContactSection({ data, watermark }: ContactSectionProps) {
   return (
     <section id="contact" className="container">
-      <div className="contact-container">
-        <span className="section-number reveal-text">{data.sectionNumber}</span>
-        <h2 className="contact-title reveal-text font-display">
-          {data.titleLine1} <br />
-          <span className="text-outline">{data.titleLine2Outline}</span>
-        </h2>
+      <div id="contact-intro" className="contact-intro-panel">
+        <div id="contact-intro-inner" className="contact-intro-inner">
+          <span className="section-number reveal-text">{data.sectionNumber}</span>
+          <h2 className="contact-title reveal-text font-display">
+            {data.titleLine1} <br />
+            <span className="text-outline">{data.titleLine2Outline}</span>
+          </h2>
+        </div>
+      </div>
 
-        {data.availability || data.responseTime ? (
-          <div className="contact-status reveal-text">
-            {data.availability ? (
-              <span className="contact-status-badge">
-                <span className="contact-status-dot" aria-hidden />
-                {data.availability}
-              </span>
-            ) : null}
-            {data.responseTime ? (
-              <span className="contact-status-note">{data.responseTime}</span>
-            ) : null}
+      <div id="contact-channels" className="contact-channels-panel">
+        <div id="contact-channels-anchor" className="contact-container">
+          {data.availability || data.responseTime ? (
+            <div className="contact-status reveal-text">
+              {data.availability ? (
+                <span className="contact-status-badge">
+                  <span className="contact-status-dot" aria-hidden />
+                  {data.availability}
+                </span>
+              ) : null}
+              {data.responseTime ? (
+                <span className="contact-status-note">{data.responseTime}</span>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className="magnetic-wrap reveal-text">
+            <a
+              href={`mailto:${data.email}`}
+              className="contact-email hover-target magnetic-btn"
+              data-strength="15"
+            >
+              {data.email}
+            </a>
           </div>
-        ) : null}
 
-        <div className="magnetic-wrap reveal-text">
-          <a
-            href={`mailto:${data.email}`}
-            className="contact-email hover-target magnetic-btn"
-            data-strength="15"
-          >
-            {data.email}
-          </a>
-        </div>
-
-        <div className="contact-channels reveal-text">
-          {data.whatsappHref ? (
-            <a
-              href={data.whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary hover-target contact-whatsapp"
-            >
-              <WhatsAppIcon />
-              {data.whatsappLabel ?? 'WhatsApp'}
-            </a>
-          ) : null}
-          {data.cvHref ? (
-            <a
-              href={data.cvHref}
-              download
-              className="btn btn-outline hover-target"
-            >
-              {data.cvLabel ?? 'Baixar CV'}
-            </a>
-          ) : null}
-        </div>
-
-        <div className="social-links reveal-text">
-          {data.socials.map((s) => (
-            <div key={s.href} className="magnetic-wrap">
+          <div className="contact-channels reveal-text">
+            {data.whatsappHref ? (
               <a
-                href={s.href}
+                href={data.whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-btn hover-target magnetic-btn"
-                data-strength="30"
-                aria-label={s.label}
+                className="btn btn-primary hover-target contact-whatsapp"
               >
-                {s.network === 'github' ? <GitHubIcon /> : <LinkedInIcon />}
+                <WhatsAppIcon />
+                {data.whatsappLabel ?? 'WhatsApp'}
               </a>
-            </div>
-          ))}
+            ) : null}
+            {data.cvHref ? (
+              <a
+                href={data.cvHref}
+                download
+                className="btn btn-outline hover-target"
+              >
+                {data.cvLabel ?? 'Baixar CV'}
+              </a>
+            ) : null}
+          </div>
+
+          <div className="social-links reveal-text">
+            {data.socials.map((s) => (
+              <div key={s.href} className="magnetic-wrap">
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-btn hover-target magnetic-btn"
+                  data-strength="30"
+                  aria-label={s.label}
+                >
+                  {s.network === 'github' ? <GitHubIcon /> : <LinkedInIcon />}
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

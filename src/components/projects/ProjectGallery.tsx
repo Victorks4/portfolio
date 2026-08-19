@@ -81,6 +81,7 @@ export function ProjectGallery({ data }: ProjectGalleryProps) {
       </div>
 
       <div
+        id="projects-carousel"
         className="projects-carousel"
         onMouseEnter={() => {
           if (!isTouch) setPaused(true)

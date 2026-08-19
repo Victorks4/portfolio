@@ -26,7 +26,7 @@ export function Hero({ data }: HeroProps) {
   return (
     <section id="hero" className="container">
       <div className="hero-layout">
-        <div className="hero-content">
+        <div className="hero-content" id="hero-content">
           {data.availability ? (
             <span className="hero-availability">
               <span className="hero-availability-dot" aria-hidden />
